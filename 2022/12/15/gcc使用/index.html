@@ -4,9 +4,11 @@
 
 <head>
     <meta charset="utf-8">
-    <meta name="keywords" content="TinyWebserver源码阅读（二）, xjmxyt的小空间">
-    <meta name="description" content="本篇文章主要介绍Http和Buffer部分Http请求和响应部分，其主要包含三个类httpConn, httpRequest, httpResponseBuffer解决的是并发情况下的读写问题
-1. http请求和响应报文首先让我们熟悉一下">
+    <meta name="keywords" content="gcc使用, xjmxyt的小空间">
+    <meta name="description" content="gcc编译编译的四个步骤
+预处理(gcc -E)：展开宏、头文件，替换条件编译、删除注释、空行、空白(hello.i)
+编译(gcc -S)：检查语法规范，得到汇编码(hello.s)
+汇编(gcc -c)：将汇编指令翻译成机器码(hell">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
     <meta name="renderer" content="webkit|ie-stand|ie-comp">
@@ -18,7 +20,7 @@
     <!-- Global site tag (gtag.js) - Google Analytics -->
 
 
-    <title>TinyWebserver源码阅读（二） | xjmxyt的小空间</title>
+    <title>gcc使用 | xjmxyt的小空间</title>
     <link rel="icon" type="image/png" href="/favicon.png">
     
 
@@ -291,12 +293,12 @@
 
 
 
-<div class="bg-cover pd-header post-cover" style="background-image: url('/medias/featureimages/23.jpg')">
+<div class="bg-cover pd-header post-cover" style="background-image: url('/medias/featureimages/16.jpg')">
     <div class="container" style="right: 0px;left: 0px;">
         <div class="row">
             <div class="col s12 m12 l12">
                 <div class="brand">
-                    <h1 class="description center-align post-title">TinyWebserver源码阅读（二）</h1>
+                    <h1 class="description center-align post-title">gcc使用</h1>
                 </div>
             </div>
         </div>
@@ -320,23 +322,14 @@
                     
                     <div class="article-tag">
                         
-                            <a href="/tags/webserver/">
-                                <span class="chip bg-color">webserver</span>
+                            <a href="/tags/linux/">
+                                <span class="chip bg-color">linux</span>
                             </a>
                         
                     </div>
                     
                 </div>
                 <div class="col s5 right-align">
-                    
-                    <div class="post-cate">
-                        <i class="fas fa-bookmark fa-fw icon-category"></i>
-                        
-                            <a href="/categories/%E5%90%8E%E7%AB%AF/" class="post-category">
-                                后端
-                            </a>
-                        
-                    </div>
                     
                 </div>
             </div>
@@ -369,255 +362,37 @@
 
         <div class="card-content article-card-content">
             <div id="articleContent">
-                <p>本篇文章主要介绍<code>Http</code>和<code>Buffer</code>部分<br><code>Http</code>请求和响应部分，其主要包含三个类<code>httpConn</code>, <code>httpRequest</code>, <code>httpResponse</code><br><code>Buffer</code>解决的是并发情况下的读写问题</p>
-<h2 id="1-http请求和响应报文"><a href="#1-http请求和响应报文" class="headerlink" title="1. http请求和响应报文"></a>1. http请求和响应报文</h2><p>首先让我们熟悉一下请求（Request）和响应（Response）报文，这两种报文在<code>WebServer</code>服务器中分别对应<code>httpRequest</code>和<code>httpResponse</code>类进行处理。</p>
-<h3 id="1-1-http请求报文"><a href="#1-1-http请求报文" class="headerlink" title="1.1 http请求报文"></a>1.1 http请求报文</h3><p>HTTP请求报文由四部分组成：</p>
+                <h2 id="gcc编译"><a href="#gcc编译" class="headerlink" title="gcc编译"></a>gcc编译</h2><h3 id="编译的四个步骤"><a href="#编译的四个步骤" class="headerlink" title="编译的四个步骤"></a>编译的四个步骤</h3><ul>
+<li>预处理(<code>gcc -E</code>)：展开宏、头文件，替换条件编译、删除注释、空行、空白(<code>hello.i</code>)</li>
+<li>编译(<code>gcc -S</code>)：检查语法规范，得到汇编码(<code>hello.s</code>)</li>
+<li>汇编(<code>gcc -c</code>)：将汇编指令翻译成机器码(<code>hello.o</code>)</li>
+<li>链接：<strong>数据段合并，数据地址回填</strong>（<code>a.out</code>）</li>
+</ul>
+<p>消耗时间和系统资源最多的是<strong>编译阶段</strong></p>
+<h3 id="常用参数"><a href="#常用参数" class="headerlink" title="常用参数"></a>常用参数</h3><pre class="line-numbers language-bash" data-language="bash"><code class="language-bash">-I: 指定头文件所在目录位置
+-c：只做预处理 编译 汇编操作
+-g：编译时添加调试文件
+-On: <span class="token assign-left variable">n</span><span class="token operator">=</span><span class="token number">0</span>~3, 优化程度
+-Wall: 显示所有的警告信息
+-D: 向程序中注册宏<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+<h3 id="动态库和静态库"><a href="#动态库和静态库" class="headerlink" title="动态库和静态库"></a>动态库和静态库</h3><p>使用场景</p>
 <ul>
-<li>请求行</li>
-<li>请求头部</li>
-<li>空行</li>
-<li>请求数据</li>
+<li>动态库：对时间要求较低，对空间要求较高</li>
+<li>静态库：对空间要求较低，对时间要求较高</li>
 </ul>
-<p>请求分为两种，GET和POST，让我们来看一个例子<br>GET</p>
-<pre class="line-numbers language-http" data-language="http"><code class="language-http">（请求行部分）
-<span class="token request-line"><span class="token method property">GET</span> <span class="token request-target url">/search?hl=zh-CN&amp;source=hp&amp;q=domety&amp;aq=f&amp;oq=</span> <span class="token http-version property">HTTP/1.1</span></span>  
-（请求头部分）
-<span class="token header"><span class="token header-name keyword">Accept</span><span class="token punctuation">:</span> <span class="token header-value">image/gif, image/x-xbitmap, image/jpeg, image/pjpeg, application/vnd.ms-excel, application/vnd.ms-powerpoint, application/msword, application/x-silverlight, application/x-shockwave-flash, */*  </span></span>
-<span class="token header"><span class="token header-name keyword">Referer</span><span class="token punctuation">:</span> <span class="token header-value">&lt;a href="http://www.google.cn/">http://www.google.cn/&lt;/a>  </span></span>
-<span class="token header"><span class="token header-name keyword">Accept-Language</span><span class="token punctuation">:</span> <span class="token header-value">zh-cn  </span></span>
-<span class="token header"><span class="token header-name keyword">Accept-Encoding</span><span class="token punctuation">:</span> <span class="token header-value">gzip, deflate  </span></span>
-<span class="token header"><span class="token header-name keyword">User-Agent</span><span class="token punctuation">:</span> <span class="token header-value">Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.1; SV1; .NET CLR 2.0.50727; TheWorld)  </span></span>
-<span class="token header"><span class="token header-name keyword">Host</span><span class="token punctuation">:</span> <span class="token header-value">&lt;a href="http://www.google.cn">www.google.cn&lt;/a>  </span></span>
-<span class="token header"><span class="token header-name keyword">Connection</span><span class="token punctuation">:</span> <span class="token header-value">Keep-Alive  </span></span>
-<span class="token header"><span class="token header-name keyword">Cookie</span><span class="token punctuation">:</span> <span class="token header-value">PREF=ID=80a06da87be9ae3c:U=f7167333e2c3b714:NW=1:TM=1261551909:LM=1261551917:S=ybYcq2wpfefs4V9g; NID=31=ojj8d-IygaEtSxLgaJmqSjVhCspkviJrB6omjamNrSm8lZhKy_yMfO2M4QMRKcH1g0iQv9u-2hfBW7bUFwVh7pGaRUb0RnHcJU37y-FxlRugatx63JLv7CWMD6UB_O_r</span></span>
-（空行）
-（请求数据）<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
-<p>POST</p>
-<pre class="line-numbers language-http" data-language="http"><code class="language-http">POST / HTTP1.1
-<span class="token header"><span class="token header-name keyword">User-Agent</span><span class="token punctuation">:</span><span class="token header-value">Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.1; SV1; .NET CLR 2.0.50727; .NET CLR 3.0.04506.648; .NET CLR 3.5.21022)</span></span>
-<span class="token header"><span class="token header-name keyword">Content-Type</span><span class="token punctuation">:</span><span class="token header-value">application/x-www-form-urlencoded</span></span>
-<span class="token header"><span class="token header-name keyword">Content-Length</span><span class="token punctuation">:</span><span class="token header-value">40</span></span>
-<span class="token header"><span class="token header-name keyword">Connection</span><span class="token punctuation">:</span> <span class="token header-value">Keep-Alive</span></span>
-空行
-name=Professional%20Ajax&amp;publisher=Wiley<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
-<h3 id="1-2-http响应报文"><a href="#1-2-http响应报文" class="headerlink" title="1.2 http响应报文"></a>1.2 http响应报文</h3><p>http响应报文由四部分组成</p>
-<ul>
-<li>状态行</li>
-<li>消息报头</li>
-<li>空行</li>
-<li>响应正文<br>一个例子如下<pre class="line-numbers language-http" data-language="http"><code class="language-http">（状态行）
-<span class="token response-status"><span class="token http-version property">HTTP/1.1</span> <span class="token status-code number">200</span> <span class="token reason-phrase string">OK</span></span>
-（消息报头）
-<span class="token header"><span class="token header-name keyword">Date</span><span class="token punctuation">:</span> <span class="token header-value">Sat, 31 Dec 2005 23:59:59 GMT</span></span>
-<span class="token header"><span class="token header-name keyword">Content-Type</span><span class="token punctuation">:</span> <span class="token header-value">text/html;charset=ISO-8859-1</span></span>
-<span class="token header"><span class="token header-name keyword">Content-Length</span><span class="token punctuation">:</span> <span class="token header-value">122</span></span>
-（空行）
-（响应正文）
-＜html＞
-＜head＞
-＜title＞Wrox Homepage＜/title＞
-＜/head＞
-＜body＞
-＜!-- body goes here --＞
-＜/body＞
-＜/html＞<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre></li>
-</ul>
-<h2 id="2-httpConn类"><a href="#2-httpConn类" class="headerlink" title="2 httpConn类"></a>2 <code>httpConn</code>类</h2><p><code>httpConn</code>类处理的是和<code>http</code>连接相关的问题，它用于处理和<code>client</code>的连接<br>其成员变量有</p>
-<pre class="line-numbers language-c++" data-language="c++"><code class="language-c++">static bool isET; &#x2F;&#x2F; 是否是边缘触发
-static const char* srcDir; &#x2F;&#x2F;根路径
-static std::atomic&lt;int&gt; userCount; &#x2F;&#x2F;总用户数
+<h4 id="制作静态库"><a href="#制作静态库" class="headerlink" title="制作静态库"></a>制作静态库</h4><pre class="line-numbers language-bash" data-language="bash"><code class="language-bash">先用gcc -c生成.o文件，再用ar生成库名
+ar rcs mylib.a add.o sub.o<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span></span></code></pre>
 
-int fd_; &#x2F;&#x2F;文件描述符
-struct  sockaddr_in addr_; &#x2F;&#x2F;连接时的socket地址
-
-bool isClose_; &#x2F;&#x2F;是否关闭
-
-int iovCnt_; &#x2F;&#x2F;供readv&#x2F;writev使用，表示缓冲区的个数
-struct iovec iov_[2]; &#x2F;&#x2F;供readv&#x2F;writev使用，表示缓冲区地址(iov_base)和长度(iov_len)的结构体
-
-Buffer readBuff_; &#x2F;&#x2F; 读缓冲区
-Buffer writeBuff_; &#x2F;&#x2F; 写缓冲区
-
-HttpRequest request_; &#x2F;&#x2F; httpRequest对象
-HttpResponse response_; &#x2F;&#x2F; httpResponse对象<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
-<p>   从成员变量中就可以看出，<code>httpConn</code>就是<code>http</code>连接的一个表示，因为成员函数就显而易见了</p>
-<ul>
-<li><code>init/close</code>: 初始化<code>httpConn</code>和关闭文件</li>
-<li><code>read/write</code>:读取数据到<code>readBuff</code>中&#x2F;将<code>writeBuff</code>中写出</li>
-<li><code>process</code>: 解析<code>readBuff</code>，将相应的<code>response</code>写到<code>writeBuff</code></li>
-<li><code>IsKeepAlive</code>: 是否还保持连接，通过<code>request_</code>的<code>isKeepAlive</code>进行判断</li>
-<li><code>get</code>相关的方法: 获得地址&#x2F;端口号等等</li>
-</ul>
-<h3 id="2-1-init和close"><a href="#2-1-init和close" class="headerlink" title="2.1 init和close"></a>2.1 <code>init</code>和<code>close</code></h3><p><code>init</code>: 初始化成员变量和静态变量，例如<code>userCount++</code>,设置<code>fd</code>, <code>addr</code>，初始化<code>writeBuff</code>和<code>readBuff</code>等等<br><code>close</code>: 解除<code>response_</code>建立的文件映射，<code>userCount--</code>,关闭<code>fd</code>，设置<code>isClosed</code>，在析构函数中会调用<code>close</code></p>
-<h3 id="2-2-read"><a href="#2-2-read" class="headerlink" title="2.2 read"></a>2.2 <code>read</code></h3><pre class="line-numbers language-c++" data-language="c++"><code class="language-c++">ssize_t HttpConn::read(int* saveErrno) &#123;
-    ssize_t len &#x3D; -1;
-    do &#123;
-        len &#x3D; readBuff_.ReadFd(fd_, saveErrno);
-        if (len &lt;&#x3D; 0) &#123;
-            break;
-        &#125;
-    &#125; while (isET);
-    return len;
-&#125;<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
-<h3 id="2-3-write"><a href="#2-3-write" class="headerlink" title="2.3 write"></a>2.3 <code>write</code></h3><p>当<code>fd</code>注册<code>EPOLLIN</code>事件时，当TCP读缓冲区有数据到达时就会触发<code>EPOLLIN</code>事件。当<code>fd</code>注册<code>EPOLLOUT</code>事件时，当TCP写缓冲区有剩余空间时就会触发<code>EPOLLOUT</code>事件，此时<code>DealWrite</code>就是处理<code>EPOLLOUT</code>事件。<br>这里有一个问题是，为什么要放到循环中?</p>
-<blockquote>
-<p>查看<code>writev	</code>的用法有提到<br>When using non-blocking I&#x2F;O on objects, such as sockets, that are subject to flow control, write() and writev() may write fewer bytes than requested; the return value must be noted, and the remainder of the operation should be retried when possible</p>
-</blockquote>
-<p><code>writev</code>是分散写,也就是你的数据可以这里一块,那里一块,然后只要将这些数据的首地址,长度什么的写到一个<code>iovc</code>的结构体数组里,传递给<code>writev</code>,<code>writev</code>就帮你来写这些数据,在你看来,分散的数据就像是连成了一体。但是在非阻塞IO的情况下，如果writev返回一个大于0的值num,这个值又小于所有要传递的文件块的总长度,这意味着什么,意味着数据还没有写完。如果你还想写的话,你下一次调用writev的时候要重新整理iovc数组</p>
-<pre class="line-numbers language-none"><code class="language-none">ssize_t HttpConn::write(int* saveErrno) &#123;
-    ssize_t len &#x3D; -1;
-    do &#123;
-        len &#x3D; writev(fd_, iov_, iovCnt_);
-        if(len &lt;&#x3D; 0) &#123;
-            *saveErrno &#x3D; errno;
-            break;
-        &#125;
-        if(iov_[0].iov_len + iov_[1].iov_len  &#x3D;&#x3D; 0) &#123; break; &#125; &#x2F;* 传输结束 *&#x2F;
-        else if(static_cast&lt;size_t&gt;(len) &gt; iov_[0].iov_len) &#123;
-            iov_[1].iov_base &#x3D; (uint8_t*) iov_[1].iov_base + (len - iov_[0].iov_len);
-            iov_[1].iov_len -&#x3D; (len - iov_[0].iov_len);
-            if(iov_[0].iov_len) &#123;
-                writeBuff_.RetrieveAll();
-                iov_[0].iov_len &#x3D; 0;
-            &#125;
-        &#125;
-        else &#123;
-            iov_[0].iov_base &#x3D; (uint8_t*)iov_[0].iov_base + len; 
-            iov_[0].iov_len -&#x3D; len; 
-            writeBuff_.Retrieve(len);
-        &#125;
-    &#125; while(isET || ToWriteBytes() &gt; 10240);
-    return len;
-&#125;<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
-<h3 id="2-4-process函数"><a href="#2-4-process函数" class="headerlink" title="2.4 process函数"></a>2.4 <code>process</code>函数</h3><ul>
-<li>初始化<code>request_</code>: <code>request_.init()</code></li>
-<li>解析<code>readBuff_</code>: <code>request.parse(readBuff_)</code>,同时用解析的内容初始化<code>response_</code></li>
-<li>生成回应内容: <code>response_.makeResponse()</code></li>
-<li>更新<code>iov</code>和<code>iov_cnt</code>: <code>iov[0]</code>存储的是响应头，<code>iov[1]</code>存储的是响应文件<code>response_.File()</code></li>
-</ul>
-<h2 id="3-httpRequest类"><a href="#3-httpRequest类" class="headerlink" title="3 httpRequest类"></a>3 <code>httpRequest</code>类</h2><p>我们仍旧从成员变量开始分析</p>
-<pre class="line-numbers language-none"><code class="language-none">PARSE_STATE state_; &#x2F;&#x2F; 状态
-std::string method_, path_, version_, body_; &#x2F;&#x2F;方法，路径，版本，请求体
-std::unordered_map&lt;std::string, std::string&gt; header_; &#x2F;&#x2F;请求头
-std::unordered_map&lt;std::string, std::string&gt; post_; &#x2F;&#x2F;post的内容
-
-static const std::unordered_set&lt;std::string&gt; DEFAULT_HTML;
-static const std::unordered_map&lt;std::string, int&gt; DEFAULT_HTML_TAG;<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
-<p> 可以看出<code>httpRequest</code>是对<code>socket</code>解析到的<code>http</code>状态的解析和保存。最主要的是<code>parse</code>函数，剩下的就约等于字符串的处理，将处理的字符串保存在成员变量中。</p>
-<h3 id="3-1-parse函数"><a href="#3-1-parse函数" class="headerlink" title="3.1 parse函数"></a>3.1 <code>parse</code>函数</h3><p> 其利用有限状态机模型，每次解析一行，从已知状态跳转到下一个状态，可以参考1.1中的<code>http</code>请求报文<br> <pre class="line-numbers language-c++" data-language="c++"><code class="language-c++"> bool HttpRequest::parse(Buffer&amp; buff) &#123;
-    const char CRLF[] &#x3D; &quot;\r\n&quot;;
-    if(buff.ReadableBytes() &lt;&#x3D; 0) &#123;
-        return false;
-    &#125;
-    while(buff.ReadableBytes() &amp;&amp; state_ !&#x3D; FINISH) &#123;
-        const char* lineEnd &#x3D; search(buff.Peek(), buff.BeginWriteConst(), CRLF, CRLF + 2);
-        std::string line(buff.Peek(), lineEnd);
-        switch(state_)
-        &#123;
-        case REQUEST_LINE:
-            if(!ParseRequestLine_(line)) &#123;
-                return false;
-            &#125;
-            ParsePath_(); &#x2F;&#x2F; state在其中会被置为HEADERS
-            break;    
-        case HEADERS:
-            ParseHeader_(line); &#x2F;&#x2F; state被置为BODY
-            if(buff.ReadableBytes() &lt;&#x3D; 2) &#123;
-                state_ &#x3D; FINISH;
-            &#125;
-            break;
-        case BODY:
-            ParseBody_(line);
-            break;
-        default:
-            break;
-        &#125;
-        if(lineEnd &#x3D;&#x3D; buff.BeginWrite()) &#123; break; &#125;
-        buff.RetrieveUntil(lineEnd + 2);
-    &#125;
-    LOG_DEBUG(&quot;[%s], [%s], [%s]&quot;, method_.c_str(), path_.c_str(), version_.c_str());
-    return true;
-&#125;<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre></p>
-<h3 id="3-2-parseHeader"><a href="#3-2-parseHeader" class="headerlink" title="3.2 parseHeader"></a>3.2 <code>parseHeader</code></h3><p>直接采用<code>regex</code>字符串匹配，将陪陪的字符串保存在<code>header</code>中</p>
-<pre class="line-numbers language-none"><code class="language-none">void HttpRequest::ParseHeader_(const string&amp; line) &#123;
-    regex patten(&quot;^([^:]*): ?(.*)$&quot;);
-    smatch subMatch;
-    if(regex_match(line, subMatch, patten)) &#123;
-        header_[subMatch[1]] &#x3D; subMatch[2];
-    &#125;
-    else &#123;
-        state_ &#x3D; BODY;
-    &#125;
-&#125;<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
-<h2 id="4-httpResponse类"><a href="#4-httpResponse类" class="headerlink" title="4 httpResponse类"></a>4 <code>httpResponse</code>类</h2><p>成员变量如下</p>
-<pre class="line-numbers language-c++" data-language="c++"><code class="language-c++">int code_; &#x2F;&#x2F; status code
-bool isKeepAlive_;
-
-std::string path_;
-std::string srcDir_;
-
-char* mmFile_; &#x2F;&#x2F;
-struct stat mmFileStat_;<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
-<h3 id="4-1-init"><a href="#4-1-init" class="headerlink" title="4.1 init"></a>4.1 <code>init</code></h3><p>采用<code>response_.parse()</code>获得的<code>src</code>, <code>path</code>, <code>code</code>, <code>keepalive</code>进行初始化</p>
-<pre class="line-numbers language-c++" data-language="c++"><code class="language-c++">void HttpResponse::Init(const string&amp; srcDir, string&amp; path, bool isKeepAlive, int code)&#123;
-    assert(srcDir !&#x3D; &quot;&quot;);
-    if(mmFile_) &#123; UnmapFile(); &#125;
-    code_ &#x3D; code;
-    isKeepAlive_ &#x3D; isKeepAlive;
-    path_ &#x3D; path;
-    srcDir_ &#x3D; srcDir;
-    mmFile_ &#x3D; nullptr; 
-    mmFileStat_ &#x3D; &#123; 0 &#125;;
-&#125;<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
-
-<h3 id="4-2-makeResponse"><a href="#4-2-makeResponse" class="headerlink" title="4.2 makeResponse"></a>4.2 <code>makeResponse</code></h3><pre class="line-numbers language-c++" data-language="c++"><code class="language-c++">void HttpResponse::MakeResponse(Buffer&amp; buff) &#123;
-    &#x2F;* 判断请求的资源文件 *&#x2F;
-    if(stat((srcDir_ + path_).data(), &amp;mmFileStat_) &lt; 0 || S_ISDIR(mmFileStat_.st_mode)) &#123;
-        code_ &#x3D; 404;
-    &#125;
-    else if(!(mmFileStat_.st_mode &amp; S_IROTH)) &#123;
-        code_ &#x3D; 403;
-    &#125;
-    else if(code_ &#x3D;&#x3D; -1) &#123; 
-        code_ &#x3D; 200; 
-    &#125;
-    ErrorHtml_();
-    AddStateLine_(buff);
-    AddHeader_(buff);
-    AddContent_(buff);
-&#125;<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
-<p><code>stat</code>用法如下</p>
-<blockquote>
-<p>int stat(const char *path, struct stat *buf);<br>stat() function is used to list properties of a file identified by path. It reads all file properties and dumps to buf structure. The function is defined in sys&#x2F;stat.h header file.<br>return 0 when success, -1 when unable to get file properties.</p>
-</blockquote>
-<p>这里先判断是否能获得文件属性，</p>
-<ul>
-<li>不能获得文件属性 or 文件属性为目录 -&gt; <code>code_ = 404</code></li>
-<li>其他组读权限 -&gt; <code>code_ = 403</code></li>
-<li>没有异常情况 -&gt; <code>code_ = 200</code></li>
-</ul>
-<p>之后根据<code>code_</code>到<code>errorHtml</code>，在这一步中如果根据错误码把<code>mmFileStat_</code>设置为对应的界面，如果<code>code</code>正常的话，其实这步会被跳过</p>
-<p>调用<code>AddStateLine_</code>添加状态行</p>
-<p>调用<code>AddHeader_</code>加入消息头</p>
-<p>调用<code>AddContent_</code>添加消息内容</p>
-<h2 id="Buffer"><a href="#Buffer" class="headerlink" title="Buffer"></a><code>Buffer</code></h2><p><code>buffer</code>主要管理的是字符串的在并发场景下的存储和读取，从<code>buffer</code>的成员变量来看，<code>buffer</code>的组成是非常简单的</p>
-<pre class="line-numbers language-c++" data-language="c++"><code class="language-c++">std::vector&lt;char&gt; buffer_;
-std::atomic&lt;std::size_t&gt; readPos_;
-std::atomic&lt;std::size_t&gt; writePos_;<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span></span></code></pre>
-<ul>
-<li>一个可扩容的<code>vector</code></li>
-<li><code>atomic</code>类型的<code>readPos_</code>和<code>writePos_</code>组成，<code>readPos_</code>表示读操作应该开始的位置，<code>writePos_</code>表示写操作应该开始的位置，<code>readPos_</code>和<code>writePos_</code>之间的区域则是写入了但还没有读的区域。</li>
-</ul>
-<p> 主要方法包括：</p>
-<ul>
-<li><code>retrieve(size_t len)</code>: 将<code>readPos_</code>向后移动<code>len</code></li>
-<li><code>retrieveAll()</code>: <code>readPos_</code>和<code>writePos</code>都置为0</li>
-<li><code>RetrieveAllToStr()</code>: 将<code>readPos_</code>和<code>writePos</code>读入到<code>string</code>中</li>
-<li><code>MakeSpace(int len)</code>: 判断能写入的区域是否能容纳下写入的长度，不能的话就<code>resize</code>一下<code>buffer</code>，否则把待写的内容移动到<code>buffer</code>的最前端</li>
-<li><code>Append(const char *str, size_t len)</code>: 先确保空间可用，不够就扩容，之后用<code>copy</code>函数将数据写入到<code>buffer</code>中，更新<code>writePos_</code></li>
-<li><code>ReadFd(int fd, int *saveErrno)</code>: 使用<code>readv</code>函数从<code>fd</code>中读取内容到<code>buffer</code>中</li>
-<li><code>WriteFd(int fd, int *saveErrno)</code>: 使用<code>write</code>函数将<code>buffer</code>内容写到<code>fd</code>中</li>
-</ul>
+<h4 id="制作动态库"><a href="#制作动态库" class="headerlink" title="制作动态库"></a>制作动态库</h4><p>需要生成与位置无关的代码，在绑定动态库时会延迟绑定，通过汇编中@plt中进行判断</p>
+<pre class="line-numbers language-bash" data-language="bash"><code class="language-bash">gcc add.c <span class="token parameter variable">-o</span> add.o -fPIC<span class="token punctuation">(</span>生成位置无关代码<span class="token punctuation">)</span>
+gcc <span class="token parameter variable">-shared</span> lib库名.so add.o sub.o<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span></span></code></pre>
+<p>编译可执行文件时，用<code>-l</code>指定库名，<code>-L</code>指定路径</p>
+<pre class="line-numbers language-bash" data-language="bash"><code class="language-bash">gcc test.c <span class="token parameter variable">-o</span> a.out <span class="token parameter variable">-lmymath</span> -L./lib -I./include<span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>
+<p>链接器：工作在链接阶段，工作时需要<code>-l</code>和<code>-L</code></p>
+<p>动态链接器：工作在运行阶段</p>
+<p>由于动态库时运行时加载的，程序需要找到动态库的位置，需要设置环境变量，<code>export LD_LIBRARY_PATH=动态库路径</code></p>
+<p>查看程序执行时要加载哪些动态库以及动态库路径</p>
+<pre class="line-numbers language-bash" data-language="bash"><code class="language-bash">ldd a.out<span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>
 
                 
             </div>
@@ -644,7 +419,7 @@ std::atomic&lt;std::size_t&gt; writePos_;<span aria-hidden="true" class="line-nu
                     </i>
                 </span>
                 <span class="reprint-info">
-                    <a href="http://xjmxyt.github.io/2022/12/15/TinyWebserver%E6%BA%90%E7%A0%81%E9%98%85%E8%AF%BB%EF%BC%88%E4%BA%8C%EF%BC%89/">http://xjmxyt.github.io/2022/12/15/TinyWebserver%E6%BA%90%E7%A0%81%E9%98%85%E8%AF%BB%EF%BC%88%E4%BA%8C%EF%BC%89/</a>
+                    <a href="http://xjmxyt.github.io/2022/12/15/gcc%E4%BD%BF%E7%94%A8/">http://xjmxyt.github.io/2022/12/15/gcc%E4%BD%BF%E7%94%A8/</a>
                 </span>
             </div>
             <div class="reprint__notice">
@@ -682,8 +457,8 @@ std::atomic&lt;std::size_t&gt; writePos_;<span aria-hidden="true" class="line-nu
                     
                         <div class="article-tag">
                             
-                                <a href="/tags/webserver/">
-                                    <span class="chip bg-color">webserver</span>
+                                <a href="/tags/linux/">
+                                    <span class="chip bg-color">linux</span>
                                 </a>
                             
                         </div>
@@ -766,13 +541,13 @@ std::atomic&lt;std::size_t&gt; writePos_;<span aria-hidden="true" class="line-nu
             <div class="article-badge left-badge text-color">
                 <i class="fas fa-chevron-left"></i>&nbsp;上一篇</div>
             <div class="card">
-                <a href="/2022/12/15/TinyWebserver%E6%BA%90%E7%A0%81%E9%98%85%E8%AF%BB%EF%BC%88%E4%B8%89%EF%BC%89/">
+                <a href="/2022/12/16/makefile/">
                     <div class="card-image">
                         
                         
-                        <img src="/medias/featureimages/18.jpg" class="responsive-img" alt="TinyWebserver源码阅读（三）">
+                        <img src="/medias/featureimages/18.jpg" class="responsive-img" alt="makefile">
                         
-                        <span class="card-title">TinyWebserver源码阅读（三）</span>
+                        <span class="card-title">makefile</span>
                     </div>
                 </a>
                 <div class="card-content article-content">
@@ -783,14 +558,14 @@ std::atomic&lt;std::size_t&gt; writePos_;<span aria-hidden="true" class="line-nu
                     </div>
                     <div class="publish-info">
                         <span class="publish-date">
-                            <i class="far fa-clock fa-fw icon-date"></i>2022-12-15
+                            <i class="far fa-clock fa-fw icon-date"></i>2022-12-16
                         </span>
                         <span class="publish-author">
                             
                             <i class="fas fa-bookmark fa-fw icon-category"></i>
                             
-                            <a href="/categories/%E5%90%8E%E7%AB%AF/" class="post-category">
-                                    后端
+                            <a href="/categories/linux/" class="post-category">
+                                    linux
                                 </a>
                             
                             
@@ -800,8 +575,8 @@ std::atomic&lt;std::size_t&gt; writePos_;<span aria-hidden="true" class="line-nu
                 
                 <div class="card-action article-tags">
                     
-                    <a href="/tags/webserver/">
-                        <span class="chip bg-color">webserver</span>
+                    <a href="/tags/linux/">
+                        <span class="chip bg-color">linux</span>
                     </a>
                     
                 </div>
@@ -815,13 +590,13 @@ std::atomic&lt;std::size_t&gt; writePos_;<span aria-hidden="true" class="line-nu
                 下一篇&nbsp;<i class="fas fa-chevron-right"></i>
             </div>
             <div class="card">
-                <a href="/2022/12/15/TinyWebserver%E6%BA%90%E7%A0%81%E9%98%85%E8%AF%BB%EF%BC%88%E4%B8%80%EF%BC%89/">
+                <a href="/2022/12/15/linux%E5%B8%B8%E7%94%A8%E6%8C%87%E4%BB%A4/">
                     <div class="card-image">
                         
                         
-                        <img src="/medias/featureimages/3.jpg" class="responsive-img" alt="TinyWebserver源码阅读（一）">
+                        <img src="/medias/featureimages/23.jpg" class="responsive-img" alt="linux常用指令">
                         
-                        <span class="card-title">TinyWebserver源码阅读（一）</span>
+                        <span class="card-title">linux常用指令</span>
                     </div>
                 </a>
                 <div class="card-content article-content">
@@ -836,12 +611,8 @@ std::atomic&lt;std::size_t&gt; writePos_;<span aria-hidden="true" class="line-nu
                             </span>
                         <span class="publish-author">
                             
-                            <i class="fas fa-bookmark fa-fw icon-category"></i>
-                            
-                            <a href="/categories/%E5%90%8E%E7%AB%AF/" class="post-category">
-                                    后端
-                                </a>
-                            
+                            <i class="fas fa-user fa-fw"></i>
+                            Jinman Xie
                             
                         </span>
                     </div>
@@ -849,8 +620,8 @@ std::atomic&lt;std::size_t&gt; writePos_;<span aria-hidden="true" class="line-nu
                 
                 <div class="card-action article-tags">
                     
-                    <a href="/tags/webserver/">
-                        <span class="chip bg-color">webserver</span>
+                    <a href="/tags/linux/">
+                        <span class="chip bg-color">linux</span>
                     </a>
                     
                 </div>

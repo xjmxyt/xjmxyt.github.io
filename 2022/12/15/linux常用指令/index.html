@@ -4,9 +4,19 @@
 
 <head>
     <meta charset="utf-8">
-    <meta name="keywords" content="TinyWebserver源码阅读（二）, xjmxyt的小空间">
-    <meta name="description" content="本篇文章主要介绍Http和Buffer部分Http请求和响应部分，其主要包含三个类httpConn, httpRequest, httpResponseBuffer解决的是并发情况下的读写问题
-1. http请求和响应报文首先让我们熟悉一下">
+    <meta name="keywords" content="linux常用指令, xjmxyt的小空间">
+    <meta name="description" content="进程监控ps显示进程信息
+ps -ef | grep 进程号
+kill强制关闭进程
+kill -9 进程号
+
+主机状态监控top查看系统整体资源
+top 
+-p 只显示进程信息
+-d 设置刷新时间
+-n 指定刷新次数
+-u 查找特定用户
+以">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
     <meta name="renderer" content="webkit|ie-stand|ie-comp">
@@ -18,7 +28,7 @@
     <!-- Global site tag (gtag.js) - Google Analytics -->
 
 
-    <title>TinyWebserver源码阅读（二） | xjmxyt的小空间</title>
+    <title>linux常用指令 | xjmxyt的小空间</title>
     <link rel="icon" type="image/png" href="/favicon.png">
     
 
@@ -296,7 +306,7 @@
         <div class="row">
             <div class="col s12 m12 l12">
                 <div class="brand">
-                    <h1 class="description center-align post-title">TinyWebserver源码阅读（二）</h1>
+                    <h1 class="description center-align post-title">linux常用指令</h1>
                 </div>
             </div>
         </div>
@@ -320,23 +330,14 @@
                     
                     <div class="article-tag">
                         
-                            <a href="/tags/webserver/">
-                                <span class="chip bg-color">webserver</span>
+                            <a href="/tags/linux/">
+                                <span class="chip bg-color">linux</span>
                             </a>
                         
                     </div>
                     
                 </div>
                 <div class="col s5 right-align">
-                    
-                    <div class="post-cate">
-                        <i class="fas fa-bookmark fa-fw icon-category"></i>
-                        
-                            <a href="/categories/%E5%90%8E%E7%AB%AF/" class="post-category">
-                                后端
-                            </a>
-                        
-                    </div>
                     
                 </div>
             </div>
@@ -369,255 +370,66 @@
 
         <div class="card-content article-card-content">
             <div id="articleContent">
-                <p>本篇文章主要介绍<code>Http</code>和<code>Buffer</code>部分<br><code>Http</code>请求和响应部分，其主要包含三个类<code>httpConn</code>, <code>httpRequest</code>, <code>httpResponse</code><br><code>Buffer</code>解决的是并发情况下的读写问题</p>
-<h2 id="1-http请求和响应报文"><a href="#1-http请求和响应报文" class="headerlink" title="1. http请求和响应报文"></a>1. http请求和响应报文</h2><p>首先让我们熟悉一下请求（Request）和响应（Response）报文，这两种报文在<code>WebServer</code>服务器中分别对应<code>httpRequest</code>和<code>httpResponse</code>类进行处理。</p>
-<h3 id="1-1-http请求报文"><a href="#1-1-http请求报文" class="headerlink" title="1.1 http请求报文"></a>1.1 http请求报文</h3><p>HTTP请求报文由四部分组成：</p>
+                <h2 id="进程监控"><a href="#进程监控" class="headerlink" title="进程监控"></a>进程监控</h2><h3 id="ps"><a href="#ps" class="headerlink" title="ps"></a>ps</h3><p>显示进程信息</p>
+<pre class="line-numbers language-bash" data-language="bash"><code class="language-bash"><span class="token function">ps</span> <span class="token parameter variable">-ef</span> <span class="token operator">|</span> <span class="token function">grep</span> 进程号<span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>
+<h3 id="kill"><a href="#kill" class="headerlink" title="kill"></a>kill</h3><p>强制关闭进程</p>
+<pre class="line-numbers language-bash" data-language="bash"><code class="language-bash"><span class="token function">kill</span> <span class="token parameter variable">-9</span> 进程号<span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>
+
+<h2 id="主机状态监控"><a href="#主机状态监控" class="headerlink" title="主机状态监控"></a>主机状态监控</h2><h3 id="top"><a href="#top" class="headerlink" title="top"></a>top</h3><p>查看系统整体资源</p>
+<pre class="line-numbers language-bash" data-language="bash"><code class="language-bash"><span class="token function">top</span> 
+<span class="token parameter variable">-p</span> 只显示进程信息
+<span class="token parameter variable">-d</span> 设置刷新时间
+<span class="token parameter variable">-n</span> 指定刷新次数
+<span class="token parameter variable">-u</span> 查找特定用户<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+<p>以交互式进行，可以通过按键有各种功能</p>
+<h3 id="netstat"><a href="#netstat" class="headerlink" title="netstat"></a>netstat</h3><p>查看端口占用</p>
+<pre class="line-numbers language-bash" data-language="bash"><code class="language-bash"><span class="token function">netstat</span> <span class="token parameter variable">-an</span> <span class="token operator">|</span> <span class="token function">grep</span> 端口号<span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>
+<p>公认端口：1～1023，系统内置或常用知名软件绑定使用<br>注册端口：1024～49151:松散绑定（用户自定义）<br>动态端口：49152～65532:临时使用（多用于出口）</p>
+<h3 id="df"><a href="#df" class="headerlink" title="df"></a>df</h3><p>查看磁盘使用情况</p>
+<pre class="line-numbers language-bash" data-language="bash"><code class="language-bash"><span class="token function">df</span> <span class="token parameter variable">-h</span><span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>
+
+<h3 id="iostat"><a href="#iostat" class="headerlink" title="iostat"></a>iostat</h3><p>查看CPU、磁盘相关情况</p>
+<pre class="line-numbers language-bash" data-language="bash"><code class="language-bash">iostat <span class="token parameter variable">-x</span><span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>
+<p>主要去关注三个指标</p>
+<p>rKB&#x2F;S: 每秒发送到设备的读取请求数</p>
+<p>wKB&#x2F;S: 每秒发送到设备的写入请求数</p>
+<p>%util：磁盘利用率</p>
+<h3 id="sar"><a href="#sar" class="headerlink" title="sar"></a>sar</h3><p>网络状态监控</p>
+<pre class="line-numbers language-bash" data-language="bash"><code class="language-bash">sar <span class="token parameter variable">-n</span> DEV<span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>
+<h2 id="环境变量"><a href="#环境变量" class="headerlink" title="环境变量"></a>环境变量</h2><h3 id="查看环境变量"><a href="#查看环境变量" class="headerlink" title="查看环境变量"></a>查看环境变量</h3><p>采用<code>env</code>查看，是<code>KEY-VALUE</code>的形式，可以通过<code>$</code>获得环境变量的值</p>
+<pre class="line-numbers language-bash" data-language="bash"><code class="language-bash"><span class="token function">env</span> <span class="token operator">|</span> <span class="token function">grep</span> <span class="token environment constant">PATH</span>
+<span class="token builtin class-name">echo</span> <span class="token environment constant">$PATH</span>
+得到的就是执行程序的搜索路径<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span></span></code></pre>
+<h3 id="设置环境变量"><a href="#设置环境变量" class="headerlink" title="设置环境变量"></a>设置环境变量</h3><h4 id="临时生效"><a href="#临时生效" class="headerlink" title="临时生效"></a>临时生效</h4><pre class="line-numbers language-bash" data-language="bash"><code class="language-bash"><span class="token builtin class-name">export</span> <span class="token assign-left variable">VAR</span><span class="token operator">=</span>xxx<span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>
+<h4 id="永久生效"><a href="#永久生效" class="headerlink" title="永久生效"></a>永久生效</h4><ul>
+<li>对当前用户生效<br>  通过用户<code>home</code>目录下的<code>.bashrc</code>中<code>export</code></li>
+<li>对全局有效<br>  通过<code>vim /etc/profile</code></li>
+</ul>
+<h2 id="压缩和解压"><a href="#压缩和解压" class="headerlink" title="压缩和解压"></a>压缩和解压</h2><p>常用2种压缩格式</p>
 <ul>
-<li>请求行</li>
-<li>请求头部</li>
-<li>空行</li>
-<li>请求数据</li>
+<li><code>.tar</code>：简单封装</li>
+<li><code>.gz</code>：极大减小压缩后的体积</li>
 </ul>
-<p>请求分为两种，GET和POST，让我们来看一个例子<br>GET</p>
-<pre class="line-numbers language-http" data-language="http"><code class="language-http">（请求行部分）
-<span class="token request-line"><span class="token method property">GET</span> <span class="token request-target url">/search?hl=zh-CN&amp;source=hp&amp;q=domety&amp;aq=f&amp;oq=</span> <span class="token http-version property">HTTP/1.1</span></span>  
-（请求头部分）
-<span class="token header"><span class="token header-name keyword">Accept</span><span class="token punctuation">:</span> <span class="token header-value">image/gif, image/x-xbitmap, image/jpeg, image/pjpeg, application/vnd.ms-excel, application/vnd.ms-powerpoint, application/msword, application/x-silverlight, application/x-shockwave-flash, */*  </span></span>
-<span class="token header"><span class="token header-name keyword">Referer</span><span class="token punctuation">:</span> <span class="token header-value">&lt;a href="http://www.google.cn/">http://www.google.cn/&lt;/a>  </span></span>
-<span class="token header"><span class="token header-name keyword">Accept-Language</span><span class="token punctuation">:</span> <span class="token header-value">zh-cn  </span></span>
-<span class="token header"><span class="token header-name keyword">Accept-Encoding</span><span class="token punctuation">:</span> <span class="token header-value">gzip, deflate  </span></span>
-<span class="token header"><span class="token header-name keyword">User-Agent</span><span class="token punctuation">:</span> <span class="token header-value">Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.1; SV1; .NET CLR 2.0.50727; TheWorld)  </span></span>
-<span class="token header"><span class="token header-name keyword">Host</span><span class="token punctuation">:</span> <span class="token header-value">&lt;a href="http://www.google.cn">www.google.cn&lt;/a>  </span></span>
-<span class="token header"><span class="token header-name keyword">Connection</span><span class="token punctuation">:</span> <span class="token header-value">Keep-Alive  </span></span>
-<span class="token header"><span class="token header-name keyword">Cookie</span><span class="token punctuation">:</span> <span class="token header-value">PREF=ID=80a06da87be9ae3c:U=f7167333e2c3b714:NW=1:TM=1261551909:LM=1261551917:S=ybYcq2wpfefs4V9g; NID=31=ojj8d-IygaEtSxLgaJmqSjVhCspkviJrB6omjamNrSm8lZhKy_yMfO2M4QMRKcH1g0iQv9u-2hfBW7bUFwVh7pGaRUb0RnHcJU37y-FxlRugatx63JLv7CWMD6UB_O_r</span></span>
-（空行）
-（请求数据）<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
-<p>POST</p>
-<pre class="line-numbers language-http" data-language="http"><code class="language-http">POST / HTTP1.1
-<span class="token header"><span class="token header-name keyword">User-Agent</span><span class="token punctuation">:</span><span class="token header-value">Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.1; SV1; .NET CLR 2.0.50727; .NET CLR 3.0.04506.648; .NET CLR 3.5.21022)</span></span>
-<span class="token header"><span class="token header-name keyword">Content-Type</span><span class="token punctuation">:</span><span class="token header-value">application/x-www-form-urlencoded</span></span>
-<span class="token header"><span class="token header-name keyword">Content-Length</span><span class="token punctuation">:</span><span class="token header-value">40</span></span>
-<span class="token header"><span class="token header-name keyword">Connection</span><span class="token punctuation">:</span> <span class="token header-value">Keep-Alive</span></span>
-空行
-name=Professional%20Ajax&amp;publisher=Wiley<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
-<h3 id="1-2-http响应报文"><a href="#1-2-http响应报文" class="headerlink" title="1.2 http响应报文"></a>1.2 http响应报文</h3><p>http响应报文由四部分组成</p>
-<ul>
-<li>状态行</li>
-<li>消息报头</li>
-<li>空行</li>
-<li>响应正文<br>一个例子如下<pre class="line-numbers language-http" data-language="http"><code class="language-http">（状态行）
-<span class="token response-status"><span class="token http-version property">HTTP/1.1</span> <span class="token status-code number">200</span> <span class="token reason-phrase string">OK</span></span>
-（消息报头）
-<span class="token header"><span class="token header-name keyword">Date</span><span class="token punctuation">:</span> <span class="token header-value">Sat, 31 Dec 2005 23:59:59 GMT</span></span>
-<span class="token header"><span class="token header-name keyword">Content-Type</span><span class="token punctuation">:</span> <span class="token header-value">text/html;charset=ISO-8859-1</span></span>
-<span class="token header"><span class="token header-name keyword">Content-Length</span><span class="token punctuation">:</span> <span class="token header-value">122</span></span>
-（空行）
-（响应正文）
-＜html＞
-＜head＞
-＜title＞Wrox Homepage＜/title＞
-＜/head＞
-＜body＞
-＜!-- body goes here --＞
-＜/body＞
-＜/html＞<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre></li>
-</ul>
-<h2 id="2-httpConn类"><a href="#2-httpConn类" class="headerlink" title="2 httpConn类"></a>2 <code>httpConn</code>类</h2><p><code>httpConn</code>类处理的是和<code>http</code>连接相关的问题，它用于处理和<code>client</code>的连接<br>其成员变量有</p>
-<pre class="line-numbers language-c++" data-language="c++"><code class="language-c++">static bool isET; &#x2F;&#x2F; 是否是边缘触发
-static const char* srcDir; &#x2F;&#x2F;根路径
-static std::atomic&lt;int&gt; userCount; &#x2F;&#x2F;总用户数
+<p>针对这两种格式，使用<code>tar</code>命令都可以进行压缩和解压缩的操作</p>
+<pre class="line-numbers language-bash" data-language="bash"><code class="language-bash">压缩文件<span class="token punctuation">(</span>f一定要最后<span class="token punctuation">)</span>
+<span class="token function">tar</span> <span class="token parameter variable">-cvf</span> test.tar <span class="token number">1</span>.txt <span class="token number">2</span>.txt <span class="token number">3</span>.txt <span class="token punctuation">(</span>会形成.tar<span class="token punctuation">)</span>
+<span class="token function">tar</span> <span class="token parameter variable">-zcvf</span> test.tar <span class="token number">1</span>.txt <span class="token number">2</span>.txt <span class="token number">3</span>.txt<span class="token punctuation">(</span>会形成.gz<span class="token punctuation">)</span>
 
-int fd_; &#x2F;&#x2F;文件描述符
-struct  sockaddr_in addr_; &#x2F;&#x2F;连接时的socket地址
+解压文件
+<span class="token function">tar</span> <span class="token parameter variable">-xvf</span> test.tar <span class="token punctuation">(</span>到当前目录<span class="token punctuation">)</span>
+<span class="token function">tar</span> <span class="token parameter variable">-xvf</span> test.tar <span class="token parameter variable">-C</span> /home <span class="token punctuation">(</span>-C 指定目的地<span class="token punctuation">)</span>
+<span class="token function">tar</span> <span class="token parameter variable">-zxvf</span> test.gz
+<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+<p><code>zip</code>的使用</p>
+<pre class="line-numbers language-bash" data-language="bash"><code class="language-bash">压缩文件
+<span class="token function">zip</span> test.zip a.txt b.txt
+<span class="token function">zip</span> <span class="token parameter variable">-r</span> test.zip <span class="token builtin class-name">test</span> a.txt b.txt<span class="token punctuation">(</span>带有文件夹时<span class="token punctuation">)</span>
 
-bool isClose_; &#x2F;&#x2F;是否关闭
+解压文件
+<span class="token function">unzip</span> test.zip <span class="token parameter variable">-d</span> 位置
+<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
 
-int iovCnt_; &#x2F;&#x2F;供readv&#x2F;writev使用，表示缓冲区的个数
-struct iovec iov_[2]; &#x2F;&#x2F;供readv&#x2F;writev使用，表示缓冲区地址(iov_base)和长度(iov_len)的结构体
 
-Buffer readBuff_; &#x2F;&#x2F; 读缓冲区
-Buffer writeBuff_; &#x2F;&#x2F; 写缓冲区
-
-HttpRequest request_; &#x2F;&#x2F; httpRequest对象
-HttpResponse response_; &#x2F;&#x2F; httpResponse对象<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
-<p>   从成员变量中就可以看出，<code>httpConn</code>就是<code>http</code>连接的一个表示，因为成员函数就显而易见了</p>
-<ul>
-<li><code>init/close</code>: 初始化<code>httpConn</code>和关闭文件</li>
-<li><code>read/write</code>:读取数据到<code>readBuff</code>中&#x2F;将<code>writeBuff</code>中写出</li>
-<li><code>process</code>: 解析<code>readBuff</code>，将相应的<code>response</code>写到<code>writeBuff</code></li>
-<li><code>IsKeepAlive</code>: 是否还保持连接，通过<code>request_</code>的<code>isKeepAlive</code>进行判断</li>
-<li><code>get</code>相关的方法: 获得地址&#x2F;端口号等等</li>
-</ul>
-<h3 id="2-1-init和close"><a href="#2-1-init和close" class="headerlink" title="2.1 init和close"></a>2.1 <code>init</code>和<code>close</code></h3><p><code>init</code>: 初始化成员变量和静态变量，例如<code>userCount++</code>,设置<code>fd</code>, <code>addr</code>，初始化<code>writeBuff</code>和<code>readBuff</code>等等<br><code>close</code>: 解除<code>response_</code>建立的文件映射，<code>userCount--</code>,关闭<code>fd</code>，设置<code>isClosed</code>，在析构函数中会调用<code>close</code></p>
-<h3 id="2-2-read"><a href="#2-2-read" class="headerlink" title="2.2 read"></a>2.2 <code>read</code></h3><pre class="line-numbers language-c++" data-language="c++"><code class="language-c++">ssize_t HttpConn::read(int* saveErrno) &#123;
-    ssize_t len &#x3D; -1;
-    do &#123;
-        len &#x3D; readBuff_.ReadFd(fd_, saveErrno);
-        if (len &lt;&#x3D; 0) &#123;
-            break;
-        &#125;
-    &#125; while (isET);
-    return len;
-&#125;<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
-<h3 id="2-3-write"><a href="#2-3-write" class="headerlink" title="2.3 write"></a>2.3 <code>write</code></h3><p>当<code>fd</code>注册<code>EPOLLIN</code>事件时，当TCP读缓冲区有数据到达时就会触发<code>EPOLLIN</code>事件。当<code>fd</code>注册<code>EPOLLOUT</code>事件时，当TCP写缓冲区有剩余空间时就会触发<code>EPOLLOUT</code>事件，此时<code>DealWrite</code>就是处理<code>EPOLLOUT</code>事件。<br>这里有一个问题是，为什么要放到循环中?</p>
-<blockquote>
-<p>查看<code>writev	</code>的用法有提到<br>When using non-blocking I&#x2F;O on objects, such as sockets, that are subject to flow control, write() and writev() may write fewer bytes than requested; the return value must be noted, and the remainder of the operation should be retried when possible</p>
-</blockquote>
-<p><code>writev</code>是分散写,也就是你的数据可以这里一块,那里一块,然后只要将这些数据的首地址,长度什么的写到一个<code>iovc</code>的结构体数组里,传递给<code>writev</code>,<code>writev</code>就帮你来写这些数据,在你看来,分散的数据就像是连成了一体。但是在非阻塞IO的情况下，如果writev返回一个大于0的值num,这个值又小于所有要传递的文件块的总长度,这意味着什么,意味着数据还没有写完。如果你还想写的话,你下一次调用writev的时候要重新整理iovc数组</p>
-<pre class="line-numbers language-none"><code class="language-none">ssize_t HttpConn::write(int* saveErrno) &#123;
-    ssize_t len &#x3D; -1;
-    do &#123;
-        len &#x3D; writev(fd_, iov_, iovCnt_);
-        if(len &lt;&#x3D; 0) &#123;
-            *saveErrno &#x3D; errno;
-            break;
-        &#125;
-        if(iov_[0].iov_len + iov_[1].iov_len  &#x3D;&#x3D; 0) &#123; break; &#125; &#x2F;* 传输结束 *&#x2F;
-        else if(static_cast&lt;size_t&gt;(len) &gt; iov_[0].iov_len) &#123;
-            iov_[1].iov_base &#x3D; (uint8_t*) iov_[1].iov_base + (len - iov_[0].iov_len);
-            iov_[1].iov_len -&#x3D; (len - iov_[0].iov_len);
-            if(iov_[0].iov_len) &#123;
-                writeBuff_.RetrieveAll();
-                iov_[0].iov_len &#x3D; 0;
-            &#125;
-        &#125;
-        else &#123;
-            iov_[0].iov_base &#x3D; (uint8_t*)iov_[0].iov_base + len; 
-            iov_[0].iov_len -&#x3D; len; 
-            writeBuff_.Retrieve(len);
-        &#125;
-    &#125; while(isET || ToWriteBytes() &gt; 10240);
-    return len;
-&#125;<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
-<h3 id="2-4-process函数"><a href="#2-4-process函数" class="headerlink" title="2.4 process函数"></a>2.4 <code>process</code>函数</h3><ul>
-<li>初始化<code>request_</code>: <code>request_.init()</code></li>
-<li>解析<code>readBuff_</code>: <code>request.parse(readBuff_)</code>,同时用解析的内容初始化<code>response_</code></li>
-<li>生成回应内容: <code>response_.makeResponse()</code></li>
-<li>更新<code>iov</code>和<code>iov_cnt</code>: <code>iov[0]</code>存储的是响应头，<code>iov[1]</code>存储的是响应文件<code>response_.File()</code></li>
-</ul>
-<h2 id="3-httpRequest类"><a href="#3-httpRequest类" class="headerlink" title="3 httpRequest类"></a>3 <code>httpRequest</code>类</h2><p>我们仍旧从成员变量开始分析</p>
-<pre class="line-numbers language-none"><code class="language-none">PARSE_STATE state_; &#x2F;&#x2F; 状态
-std::string method_, path_, version_, body_; &#x2F;&#x2F;方法，路径，版本，请求体
-std::unordered_map&lt;std::string, std::string&gt; header_; &#x2F;&#x2F;请求头
-std::unordered_map&lt;std::string, std::string&gt; post_; &#x2F;&#x2F;post的内容
-
-static const std::unordered_set&lt;std::string&gt; DEFAULT_HTML;
-static const std::unordered_map&lt;std::string, int&gt; DEFAULT_HTML_TAG;<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
-<p> 可以看出<code>httpRequest</code>是对<code>socket</code>解析到的<code>http</code>状态的解析和保存。最主要的是<code>parse</code>函数，剩下的就约等于字符串的处理，将处理的字符串保存在成员变量中。</p>
-<h3 id="3-1-parse函数"><a href="#3-1-parse函数" class="headerlink" title="3.1 parse函数"></a>3.1 <code>parse</code>函数</h3><p> 其利用有限状态机模型，每次解析一行，从已知状态跳转到下一个状态，可以参考1.1中的<code>http</code>请求报文<br> <pre class="line-numbers language-c++" data-language="c++"><code class="language-c++"> bool HttpRequest::parse(Buffer&amp; buff) &#123;
-    const char CRLF[] &#x3D; &quot;\r\n&quot;;
-    if(buff.ReadableBytes() &lt;&#x3D; 0) &#123;
-        return false;
-    &#125;
-    while(buff.ReadableBytes() &amp;&amp; state_ !&#x3D; FINISH) &#123;
-        const char* lineEnd &#x3D; search(buff.Peek(), buff.BeginWriteConst(), CRLF, CRLF + 2);
-        std::string line(buff.Peek(), lineEnd);
-        switch(state_)
-        &#123;
-        case REQUEST_LINE:
-            if(!ParseRequestLine_(line)) &#123;
-                return false;
-            &#125;
-            ParsePath_(); &#x2F;&#x2F; state在其中会被置为HEADERS
-            break;    
-        case HEADERS:
-            ParseHeader_(line); &#x2F;&#x2F; state被置为BODY
-            if(buff.ReadableBytes() &lt;&#x3D; 2) &#123;
-                state_ &#x3D; FINISH;
-            &#125;
-            break;
-        case BODY:
-            ParseBody_(line);
-            break;
-        default:
-            break;
-        &#125;
-        if(lineEnd &#x3D;&#x3D; buff.BeginWrite()) &#123; break; &#125;
-        buff.RetrieveUntil(lineEnd + 2);
-    &#125;
-    LOG_DEBUG(&quot;[%s], [%s], [%s]&quot;, method_.c_str(), path_.c_str(), version_.c_str());
-    return true;
-&#125;<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre></p>
-<h3 id="3-2-parseHeader"><a href="#3-2-parseHeader" class="headerlink" title="3.2 parseHeader"></a>3.2 <code>parseHeader</code></h3><p>直接采用<code>regex</code>字符串匹配，将陪陪的字符串保存在<code>header</code>中</p>
-<pre class="line-numbers language-none"><code class="language-none">void HttpRequest::ParseHeader_(const string&amp; line) &#123;
-    regex patten(&quot;^([^:]*): ?(.*)$&quot;);
-    smatch subMatch;
-    if(regex_match(line, subMatch, patten)) &#123;
-        header_[subMatch[1]] &#x3D; subMatch[2];
-    &#125;
-    else &#123;
-        state_ &#x3D; BODY;
-    &#125;
-&#125;<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
-<h2 id="4-httpResponse类"><a href="#4-httpResponse类" class="headerlink" title="4 httpResponse类"></a>4 <code>httpResponse</code>类</h2><p>成员变量如下</p>
-<pre class="line-numbers language-c++" data-language="c++"><code class="language-c++">int code_; &#x2F;&#x2F; status code
-bool isKeepAlive_;
-
-std::string path_;
-std::string srcDir_;
-
-char* mmFile_; &#x2F;&#x2F;
-struct stat mmFileStat_;<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
-<h3 id="4-1-init"><a href="#4-1-init" class="headerlink" title="4.1 init"></a>4.1 <code>init</code></h3><p>采用<code>response_.parse()</code>获得的<code>src</code>, <code>path</code>, <code>code</code>, <code>keepalive</code>进行初始化</p>
-<pre class="line-numbers language-c++" data-language="c++"><code class="language-c++">void HttpResponse::Init(const string&amp; srcDir, string&amp; path, bool isKeepAlive, int code)&#123;
-    assert(srcDir !&#x3D; &quot;&quot;);
-    if(mmFile_) &#123; UnmapFile(); &#125;
-    code_ &#x3D; code;
-    isKeepAlive_ &#x3D; isKeepAlive;
-    path_ &#x3D; path;
-    srcDir_ &#x3D; srcDir;
-    mmFile_ &#x3D; nullptr; 
-    mmFileStat_ &#x3D; &#123; 0 &#125;;
-&#125;<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
-
-<h3 id="4-2-makeResponse"><a href="#4-2-makeResponse" class="headerlink" title="4.2 makeResponse"></a>4.2 <code>makeResponse</code></h3><pre class="line-numbers language-c++" data-language="c++"><code class="language-c++">void HttpResponse::MakeResponse(Buffer&amp; buff) &#123;
-    &#x2F;* 判断请求的资源文件 *&#x2F;
-    if(stat((srcDir_ + path_).data(), &amp;mmFileStat_) &lt; 0 || S_ISDIR(mmFileStat_.st_mode)) &#123;
-        code_ &#x3D; 404;
-    &#125;
-    else if(!(mmFileStat_.st_mode &amp; S_IROTH)) &#123;
-        code_ &#x3D; 403;
-    &#125;
-    else if(code_ &#x3D;&#x3D; -1) &#123; 
-        code_ &#x3D; 200; 
-    &#125;
-    ErrorHtml_();
-    AddStateLine_(buff);
-    AddHeader_(buff);
-    AddContent_(buff);
-&#125;<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
-<p><code>stat</code>用法如下</p>
-<blockquote>
-<p>int stat(const char *path, struct stat *buf);<br>stat() function is used to list properties of a file identified by path. It reads all file properties and dumps to buf structure. The function is defined in sys&#x2F;stat.h header file.<br>return 0 when success, -1 when unable to get file properties.</p>
-</blockquote>
-<p>这里先判断是否能获得文件属性，</p>
-<ul>
-<li>不能获得文件属性 or 文件属性为目录 -&gt; <code>code_ = 404</code></li>
-<li>其他组读权限 -&gt; <code>code_ = 403</code></li>
-<li>没有异常情况 -&gt; <code>code_ = 200</code></li>
-</ul>
-<p>之后根据<code>code_</code>到<code>errorHtml</code>，在这一步中如果根据错误码把<code>mmFileStat_</code>设置为对应的界面，如果<code>code</code>正常的话，其实这步会被跳过</p>
-<p>调用<code>AddStateLine_</code>添加状态行</p>
-<p>调用<code>AddHeader_</code>加入消息头</p>
-<p>调用<code>AddContent_</code>添加消息内容</p>
-<h2 id="Buffer"><a href="#Buffer" class="headerlink" title="Buffer"></a><code>Buffer</code></h2><p><code>buffer</code>主要管理的是字符串的在并发场景下的存储和读取，从<code>buffer</code>的成员变量来看，<code>buffer</code>的组成是非常简单的</p>
-<pre class="line-numbers language-c++" data-language="c++"><code class="language-c++">std::vector&lt;char&gt; buffer_;
-std::atomic&lt;std::size_t&gt; readPos_;
-std::atomic&lt;std::size_t&gt; writePos_;<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span></span></code></pre>
-<ul>
-<li>一个可扩容的<code>vector</code></li>
-<li><code>atomic</code>类型的<code>readPos_</code>和<code>writePos_</code>组成，<code>readPos_</code>表示读操作应该开始的位置，<code>writePos_</code>表示写操作应该开始的位置，<code>readPos_</code>和<code>writePos_</code>之间的区域则是写入了但还没有读的区域。</li>
-</ul>
-<p> 主要方法包括：</p>
-<ul>
-<li><code>retrieve(size_t len)</code>: 将<code>readPos_</code>向后移动<code>len</code></li>
-<li><code>retrieveAll()</code>: <code>readPos_</code>和<code>writePos</code>都置为0</li>
-<li><code>RetrieveAllToStr()</code>: 将<code>readPos_</code>和<code>writePos</code>读入到<code>string</code>中</li>
-<li><code>MakeSpace(int len)</code>: 判断能写入的区域是否能容纳下写入的长度，不能的话就<code>resize</code>一下<code>buffer</code>，否则把待写的内容移动到<code>buffer</code>的最前端</li>
-<li><code>Append(const char *str, size_t len)</code>: 先确保空间可用，不够就扩容，之后用<code>copy</code>函数将数据写入到<code>buffer</code>中，更新<code>writePos_</code></li>
-<li><code>ReadFd(int fd, int *saveErrno)</code>: 使用<code>readv</code>函数从<code>fd</code>中读取内容到<code>buffer</code>中</li>
-<li><code>WriteFd(int fd, int *saveErrno)</code>: 使用<code>write</code>函数将<code>buffer</code>内容写到<code>fd</code>中</li>
-</ul>
 
                 
             </div>
@@ -644,7 +456,7 @@ std::atomic&lt;std::size_t&gt; writePos_;<span aria-hidden="true" class="line-nu
                     </i>
                 </span>
                 <span class="reprint-info">
-                    <a href="http://xjmxyt.github.io/2022/12/15/TinyWebserver%E6%BA%90%E7%A0%81%E9%98%85%E8%AF%BB%EF%BC%88%E4%BA%8C%EF%BC%89/">http://xjmxyt.github.io/2022/12/15/TinyWebserver%E6%BA%90%E7%A0%81%E9%98%85%E8%AF%BB%EF%BC%88%E4%BA%8C%EF%BC%89/</a>
+                    <a href="http://xjmxyt.github.io/2022/12/15/linux%E5%B8%B8%E7%94%A8%E6%8C%87%E4%BB%A4/">http://xjmxyt.github.io/2022/12/15/linux%E5%B8%B8%E7%94%A8%E6%8C%87%E4%BB%A4/</a>
                 </span>
             </div>
             <div class="reprint__notice">
@@ -682,8 +494,8 @@ std::atomic&lt;std::size_t&gt; writePos_;<span aria-hidden="true" class="line-nu
                     
                         <div class="article-tag">
                             
-                                <a href="/tags/webserver/">
-                                    <span class="chip bg-color">webserver</span>
+                                <a href="/tags/linux/">
+                                    <span class="chip bg-color">linux</span>
                                 </a>
                             
                         </div>
@@ -766,13 +578,13 @@ std::atomic&lt;std::size_t&gt; writePos_;<span aria-hidden="true" class="line-nu
             <div class="article-badge left-badge text-color">
                 <i class="fas fa-chevron-left"></i>&nbsp;上一篇</div>
             <div class="card">
-                <a href="/2022/12/15/TinyWebserver%E6%BA%90%E7%A0%81%E9%98%85%E8%AF%BB%EF%BC%88%E4%B8%89%EF%BC%89/">
+                <a href="/2022/12/15/gcc%E4%BD%BF%E7%94%A8/">
                     <div class="card-image">
                         
                         
-                        <img src="/medias/featureimages/18.jpg" class="responsive-img" alt="TinyWebserver源码阅读（三）">
+                        <img src="/medias/featureimages/16.jpg" class="responsive-img" alt="gcc使用">
                         
-                        <span class="card-title">TinyWebserver源码阅读（三）</span>
+                        <span class="card-title">gcc使用</span>
                     </div>
                 </a>
                 <div class="card-content article-content">
@@ -787,12 +599,8 @@ std::atomic&lt;std::size_t&gt; writePos_;<span aria-hidden="true" class="line-nu
                         </span>
                         <span class="publish-author">
                             
-                            <i class="fas fa-bookmark fa-fw icon-category"></i>
-                            
-                            <a href="/categories/%E5%90%8E%E7%AB%AF/" class="post-category">
-                                    后端
-                                </a>
-                            
+                            <i class="fas fa-user fa-fw"></i>
+                            Jinman Xie
                             
                         </span>
                     </div>
@@ -800,8 +608,8 @@ std::atomic&lt;std::size_t&gt; writePos_;<span aria-hidden="true" class="line-nu
                 
                 <div class="card-action article-tags">
                     
-                    <a href="/tags/webserver/">
-                        <span class="chip bg-color">webserver</span>
+                    <a href="/tags/linux/">
+                        <span class="chip bg-color">linux</span>
                     </a>
                     
                 </div>
@@ -815,13 +623,13 @@ std::atomic&lt;std::size_t&gt; writePos_;<span aria-hidden="true" class="line-nu
                 下一篇&nbsp;<i class="fas fa-chevron-right"></i>
             </div>
             <div class="card">
-                <a href="/2022/12/15/TinyWebserver%E6%BA%90%E7%A0%81%E9%98%85%E8%AF%BB%EF%BC%88%E4%B8%80%EF%BC%89/">
+                <a href="/2022/12/15/MIT6-824%E2%80%94%E2%80%94GFS%E6%96%87%E4%BB%B6%E7%B3%BB%E7%BB%9F/">
                     <div class="card-image">
                         
                         
-                        <img src="/medias/featureimages/3.jpg" class="responsive-img" alt="TinyWebserver源码阅读（一）">
+                        <img src="/medias/featureimages/11.jpg" class="responsive-img" alt="MIT6.824——GFS文件系统">
                         
-                        <span class="card-title">TinyWebserver源码阅读（一）</span>
+                        <span class="card-title">MIT6.824——GFS文件系统</span>
                     </div>
                 </a>
                 <div class="card-content article-content">
@@ -838,8 +646,8 @@ std::atomic&lt;std::size_t&gt; writePos_;<span aria-hidden="true" class="line-nu
                             
                             <i class="fas fa-bookmark fa-fw icon-category"></i>
                             
-                            <a href="/categories/%E5%90%8E%E7%AB%AF/" class="post-category">
-                                    后端
+                            <a href="/categories/%E5%88%86%E5%B8%83%E5%BC%8F%E7%B3%BB%E7%BB%9F/" class="post-category">
+                                    分布式系统
                                 </a>
                             
                             
@@ -849,8 +657,8 @@ std::atomic&lt;std::size_t&gt; writePos_;<span aria-hidden="true" class="line-nu
                 
                 <div class="card-action article-tags">
                     
-                    <a href="/tags/webserver/">
-                        <span class="chip bg-color">webserver</span>
+                    <a href="/tags/%E5%88%86%E5%B8%83%E5%BC%8F%E7%B3%BB%E7%BB%9F/">
+                        <span class="chip bg-color">分布式系统</span>
                     </a>
                     
                 </div>
