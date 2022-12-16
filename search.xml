@@ -4,6 +4,56 @@
   
     
     <entry>
+      <title>MIT6.824——GFS文件系统</title>
+      <link href="/2022/12/15/MIT6-824%E2%80%94%E2%80%94GFS%E6%96%87%E4%BB%B6%E7%B3%BB%E7%BB%9F/"/>
+      <url>/2022/12/15/MIT6-824%E2%80%94%E2%80%94GFS%E6%96%87%E4%BB%B6%E7%B3%BB%E7%BB%9F/</url>
+      
+        <content type="html"><![CDATA[<h1 id="分布式系统——GFS文件系统"><a href="#分布式系统——GFS文件系统" class="headerlink" title="分布式系统——GFS文件系统"></a>分布式系统——GFS文件系统</h1><p>参考论文: <a href="https://pdos.csail.mit.edu/6.824/papers/gfs.pdf">https://pdos.csail.mit.edu/6.824/papers/gfs.pdf</a></p><p><img src="/images/pasted-0.png"></p><p><img src="/images/pasted-1.png"></p><p><img src="/images/pasted-2.png"></p><p><img src="/images/pasted-3.png"></p>]]></content>
+      
+      
+      <categories>
+          
+          <category> 分布式系统 </category>
+          
+      </categories>
+      
+      
+        <tags>
+            
+            <tag> 分布式系统 </tag>
+            
+        </tags>
+      
+    </entry>
+    
+    
+    
+    <entry>
+      <title>MIT6.824——Primary-Backup Replication</title>
+      <link href="/2022/12/15/MIT6-824%E2%80%94%E2%80%94Primary-Backup-Replication/"/>
+      <url>/2022/12/15/MIT6-824%E2%80%94%E2%80%94Primary-Backup-Replication/</url>
+      
+        <content type="html"><![CDATA[<p><a href="https://www.bilibili.com/video/BV1CU4y1P7PE?p=4&vd_source=b2dfa40e00786129d946ba9ac4634819">课程链接</a></p><p>主从备份可以工作的前提是：主从机器出错的概率是相互独立的</p><h2 id="主从备份"><a href="#主从备份" class="headerlink" title="主从备份"></a>主从备份</h2><h3 id="同步状态的级别"><a href="#同步状态的级别" class="headerlink" title="同步状态的级别"></a>同步状态的级别</h3><ul><li><p>应用层</p><p>  GFS采取的是应用层的同步</p></li><li><p>机器层</p><p>  运行的服务器无需改动而获取容错能力，但需要更细粒度的同步，例如中断DMA</p></li></ul><h3 id="两种备份的方式"><a href="#两种备份的方式" class="headerlink" title="两种备份的方式"></a>两种备份的方式</h3><ul><li><p>State transfer(状态转移)</p><p>  持续增量同步Primary的状态到Backup，包括CPU、内存等，同步时需要占用较大带宽</p></li><li><p>Replicated State Machine（冗余状态机）</p><p>  同步的是外部事件&#x2F;操作&#x2F;输入，但是一些事件，例如随机数的生成，是不具有确定性的</p></li></ul><h3 id="backup过程"><a href="#backup过程" class="headerlink" title="backup过程"></a>backup过程</h3><p>virtual machine monitor可以感知到client发送的中断等信号，将这些信号转发到backup virtual machine monitor上。只有primary能生成数据回复，backup会drop掉恢复的包</p><p>primary和back会通过logging channel进行通信，如果发现找不到primary，就成为primary, 具体切换过程如下：</p><ul><li>Backup声称具有primary的mac地址，让ARP缓存表过期，这样IP的流量就会到Backup</li><li>切换后Backup成为新的primary</li></ul><p>Non-deterministic events</p><ul><li>Inputs-&gt;packet-&gt;data+interrupt:在哪条指令之间发生中断必须相同</li><li>weird instructions：随机数生成器</li><li>multi-core</li></ul><h3 id="logging-channel"><a href="#logging-channel" class="headerlink" title="logging channel"></a>logging channel</h3><p>为了进行容错（FT），我们使用日志条目（log entry ）来记录 Primary 上发生的事件；但我们并没有将这些日志写到硬盘中，而是将其通过日志通道（logging channel）传送到 Backup 上进行实时确定性的重建（deterministic replay），其包含</p><ul><li>instruction number: to handle interruption</li><li>type: to record weird instructions</li><li>data</li></ul><h3 id="OutPut-rule"><a href="#OutPut-rule" class="headerlink" title="OutPut rule"></a>OutPut rule</h3><p>用来保证指令primary如果发生宕机，发送给Backup的指令丢失带来的不一致性。<br>核心就是：等待收到 Backup 该条指令的 ACK 时，才会将该指令结果发送给用户。</p>]]></content>
+      
+      
+      <categories>
+          
+          <category> 分布式系统 </category>
+          
+      </categories>
+      
+      
+        <tags>
+            
+            <tag> 分布式系统 </tag>
+            
+        </tags>
+      
+    </entry>
+    
+    
+    
+    <entry>
       <title>TinyWebserver源码阅读（三）</title>
       <link href="/2022/12/15/TinyWebserver%E6%BA%90%E7%A0%81%E9%98%85%E8%AF%BB%EF%BC%88%E4%B8%89%EF%BC%89/"/>
       <url>/2022/12/15/TinyWebserver%E6%BA%90%E7%A0%81%E9%98%85%E8%AF%BB%EF%BC%88%E4%B8%89%EF%BC%89/</url>
@@ -71,31 +121,6 @@
         <tags>
             
             <tag> webserver </tag>
-            
-        </tags>
-      
-    </entry>
-    
-    
-    
-    <entry>
-      <title>MIT6.824——GFS文件系统</title>
-      <link href="/2022/12/15/MIT6-824%E2%80%94%E2%80%94GFS%E6%96%87%E4%BB%B6%E7%B3%BB%E7%BB%9F/"/>
-      <url>/2022/12/15/MIT6-824%E2%80%94%E2%80%94GFS%E6%96%87%E4%BB%B6%E7%B3%BB%E7%BB%9F/</url>
-      
-        <content type="html"><![CDATA[<h1 id="分布式系统——GFS文件系统"><a href="#分布式系统——GFS文件系统" class="headerlink" title="分布式系统——GFS文件系统"></a>分布式系统——GFS文件系统</h1><p>参考论文: <a href="https://pdos.csail.mit.edu/6.824/papers/gfs.pdf">https://pdos.csail.mit.edu/6.824/papers/gfs.pdf</a></p><p><img src="/images/pasted-0.png"></p><p><img src="/images/pasted-1.png"></p><p><img src="/images/pasted-2.png"></p><p><img src="/images/pasted-3.png"></p>]]></content>
-      
-      
-      <categories>
-          
-          <category> 分布式系统 </category>
-          
-      </categories>
-      
-      
-        <tags>
-            
-            <tag> 分布式系统 </tag>
             
         </tags>
       
