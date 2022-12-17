@@ -4,13 +4,9 @@
 
 <head>
     <meta charset="utf-8">
-    <meta name="keywords" content="MIT6.824——GFS文件系统, xjmxyt的小空间">
-    <meta name="description" content="分布式系统——GFS文件系统参考论文: https://pdos.csail.mit.edu/6.824/papers/gfs.pdf
-
-
-
-
-">
+    <meta name="keywords" content="编程之美阅读笔记（一）, xjmxyt的小空间">
+    <meta name="description" content="一直看到各路博主安利这门书，在家里的书柜里把之前买了一直没看的这本书又翻了出来。读这本书的感受大概是——很有意思的算法题……于是将有意思的题记录下来
+第一章 游戏之乐将帅问题中国象棋中的将帅不能碰面，假设A为将，B为帅，则A,B分别只能在己">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
     <meta name="renderer" content="webkit|ie-stand|ie-comp">
@@ -22,7 +18,7 @@
     <!-- Global site tag (gtag.js) - Google Analytics -->
 
 
-    <title>MIT6.824——GFS文件系统 | xjmxyt的小空间</title>
+    <title>编程之美阅读笔记（一） | xjmxyt的小空间</title>
     <link rel="icon" type="image/png" href="/favicon.png">
     
 
@@ -295,12 +291,12 @@
 
 
 
-<div class="bg-cover pd-header post-cover" style="background-image: url('/medias/featureimages/11.jpg')">
+<div class="bg-cover pd-header post-cover" style="background-image: url('/medias/featureimages/23.jpg')">
     <div class="container" style="right: 0px;left: 0px;">
         <div class="row">
             <div class="col s12 m12 l12">
                 <div class="brand">
-                    <h1 class="description center-align post-title">MIT6.824——GFS文件系统</h1>
+                    <h1 class="description center-align post-title">编程之美阅读笔记（一）</h1>
                 </div>
             </div>
         </div>
@@ -324,23 +320,14 @@
                     
                     <div class="article-tag">
                         
-                            <a href="/tags/%E5%88%86%E5%B8%83%E5%BC%8F%E7%B3%BB%E7%BB%9F/">
-                                <span class="chip bg-color">分布式系统</span>
+                            <a href="/tags/%E7%BC%96%E7%A8%8B/">
+                                <span class="chip bg-color">编程</span>
                             </a>
                         
                     </div>
                     
                 </div>
                 <div class="col s5 right-align">
-                    
-                    <div class="post-cate">
-                        <i class="fas fa-bookmark fa-fw icon-category"></i>
-                        
-                            <a href="/categories/%E5%88%86%E5%B8%83%E5%BC%8F%E7%B3%BB%E7%BB%9F/" class="post-category">
-                                分布式系统
-                            </a>
-                        
-                    </div>
                     
                 </div>
             </div>
@@ -349,7 +336,7 @@
                 
                 <div class="post-date info-break-policy">
                     <i class="far fa-calendar-minus fa-fw"></i>发布日期:&nbsp;&nbsp;
-                    2022-12-15
+                    2022-12-17
                 </div>
                 
 
@@ -373,11 +360,67 @@
 
         <div class="card-content article-card-content">
             <div id="articleContent">
-                <h1 id="分布式系统——GFS文件系统"><a href="#分布式系统——GFS文件系统" class="headerlink" title="分布式系统——GFS文件系统"></a>分布式系统——GFS文件系统</h1><p>参考论文: <a target="_blank" rel="noopener" href="https://pdos.csail.mit.edu/6.824/papers/gfs.pdf">https://pdos.csail.mit.edu/6.824/papers/gfs.pdf</a></p>
-<p><img src="/images/pasted-0.png"></p>
-<p><img src="/images/pasted-1.png"></p>
-<p><img src="/images/pasted-2.png"></p>
-<p><img src="/images/pasted-3.png"></p>
+                <p>一直看到各路博主安利这门书，在家里的书柜里把之前买了一直没看的这本书又翻了出来。读这本书的感受大概是——很有意思的算法题……于是将有意思的题记录下来</p>
+<h2 id="第一章-游戏之乐"><a href="#第一章-游戏之乐" class="headerlink" title="第一章 游戏之乐"></a>第一章 游戏之乐</h2><h3 id="将帅问题"><a href="#将帅问题" class="headerlink" title="将帅问题"></a>将帅问题</h3><p>中国象棋中的将帅不能碰面，假设A为将，B为帅，则A,B分别只能在己方3*3的格子里面运动，且不能碰面，请书写一个程序，输出A，B所有的合法位置，要求代码中只能用一个字节存储变量。</p>
+<h4 id="解法一"><a href="#解法一" class="headerlink" title="解法一"></a>解法一</h4><p>分析：题目的关键是<strong>一个字节</strong>存储，自然的想到用<strong>bit</strong>去存储位置，加上枚举就能得到结果。思路很简单，但是答案让我非常impressive的一点是<strong>简洁的<code>define</code>用法</strong> <del>虽然貌似在effective c++中不推荐使用define</del></p>
+<pre class="line-numbers language-c++" data-language="c++"><code class="language-c++">#include &lt;stdio.h&gt;
+#define HALF_BITS_LENGTH 4
+#define FULLMASK 255
+#define RMASK (FULLMASK &gt;&gt; HALF_BITS_LENGTH)
+#define LMASK (FULLMASK &lt;&lt; HALF_BITS_LENGTH)
+#define LSET(b, n) (b&#x3D;((b&amp;RMASK)|(n&lt;&lt;HALF_BITS_LENGTH)))
+#define RSET(b, n) (b&#x3D;((b&amp;LMASK)|n))
+#define RGET(b) (b&amp;RMASK)
+#define LGET(b) ((b&amp;LMASK)&gt;&gt;HALF_BITS_LENGTH)
+#define MAXPOS 9
+
+int main()&#123;
+	unsigned char b;
+    for(LSET(b,1); LGET(b)&lt;&#x3D;MAXPOS; LSET(b, LGET(b)+1))
+    &#123;
+    	for(RSET(b,1); RGET(b)&lt;&#x3D;MAXPOS; RSET(b, RGET(b)+1))&#123;
+        	if(LGET(b)%3!&#x3D;RGET(b)%3) printf(&quot;A&#x3D;%d, B&#x3D;%d\n&quot;, LGET(b), RGET(b));
+        &#125;
+    &#125;
+    return 0;
+&#125;<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+<h4 id="解法二"><a href="#解法二" class="headerlink" title="解法二"></a>解法二</h4><p>刚刚是我们的标准解法，之后给出了其他的解法，首先看和标准解法最相近的第一种</p>
+<pre class="line-numbers language-c++" data-language="c++"><code class="language-c++">struct&#123;
+	unsigned char a:4;
+    unsigned char b:4;
+&#125;i;
+for(i.a&#x3D;1; i.a&lt;&#x3D;9; i.a++)&#123;
+	for(i.b&#x3D;0; i.b&lt;&#x3D;9; i.b++)&#123;
+    	if(i.a%3!&#x3D;i.b%3) printf(...);
+    &#125;
+&#125;<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+<p>这里用到了<strong>位域</strong>，有些信息在存储时，并不需要占用一个完整的字节，而只需占几个或一个二进制位。例如在存放一个开关量时，只有0和1 两种状态，用一位二进位即可。为了节省存储空间，并使处理简便，Ｃ语言又提供了一种数据结构，称为“位域”或“位段”。所谓“位域”是把一个字节中的二进位划分为几个不同的区域，并说明每个区域的位数。每个域有一个域名，允许在程序中按域名进行操作。这样就可以把几个不同的对象用一个字节的二进制位域来表示。</p>
+<h4 id="解法三"><a href="#解法三" class="headerlink" title="解法三"></a>解法三</h4><p>最后一种解法的思路在想既然我们一共有<code>9*9</code>种位置的组合情况，我们需要的<code>pos1</code>和<code>pos2</code>要没有依赖关系，也就是在<code>pos1=x</code>时，<code>pos2</code>可以对所有值进行遍历，这个时候想到了除数，余数，其中一个取除数另一个取余数，这样就能遍历所有值了。</p>
+<pre class="line-numbers language-c++" data-language="c++"><code class="language-c++">for(i&#x3D;1; i&lt;&#x3D;81; ++i)&#123;
+	if(i%9%3 !&#x3D; i&#x2F;9%3) printf(...);
+&#125;<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span></span></code></pre>
+<h4 id="到底哪种更快"><a href="#到底哪种更快" class="headerlink" title="到底哪种更快"></a>到底哪种更快</h4><p>对解法1～3进行测试，结果如下</p>
+<pre class="line-numbers language-c++" data-language="c++"><code class="language-c++">解法一：time is 0.000130
+解法二：time is 0.000091
+解法三：time is 0.000081<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span></span></code></pre>
+<p>由此可见，解法3是最快的，真的是毫无多余操作惹</p>
+<h3 id="如何找出故障的机器"><a href="#如何找出故障的机器" class="headerlink" title="如何找出故障的机器"></a>如何找出故障的机器</h3><p>题目：假设一个机器只存储一个标号为ID的记录，假设每份数据保存2个备份，这样就有2个机器存储了相同的数据。其中ID是小于10亿的整数</p>
+<p>问题1、在某个时间，如果得到一个数据文件ID的列表。是否能够快速的找到这个表中仅出现一次的ID?即快速找出出现故障的机器存储的数据ID。</p>
+<p>问题2、如果有两台机器死机呢？（假设同一个数据的俩个备份不会同时丢失，即列表中缺少的是两个不等的ID）</p>
+<p>扩展题、如果所有的机子都有三个备份，也就是说同一ID的机子有三台。而且同时又有三台机子死机，还能用上面的方法解决吗？</p>
+<p>如果有N台备份，又同时有N台机器死机呢？</p>
+<p><strong>分析</strong>：已知一个数组，数组中只有<code>n</code>个数据是出现一遍的，其他数据都是出现两遍，我们要把这个数据找出来</p>
+<p>给我最具有启发性idea是：</p>
+<ul>
+<li>异或操作：寻找一个函数<code>f</code>能将映射到要找的值中</li>
+<li>不变量：有什么是不变的，哪些变化会带来这个不变量的变化</li>
+</ul>
+<h4 id="解法一-1"><a href="#解法一-1" class="headerlink" title="解法一"></a>解法一</h4><p>如果只有一台不同的机器，直接<code>异或</code>操作，最后就是结果啦！</p>
+<p>但是当不同的机器上升为两台时，异或操作的结果就是这两台机器的异或值，如果有不同的位，可以分类讨论，直接安装这一位把原来的机器分为两类。</p>
+<p>但是当机器数上升时，这个方法就不能用了。。。</p>
+<h4 id="解法二-1"><a href="#解法二-1" class="headerlink" title="解法二"></a>解法二</h4><p>求和是一个不变量，因为可以直接求和，坏掉机器的id和&#x3D;原来的总和-现在的总和</p>
+<p>在坏掉多台时，显然一个方程解不出来，那可以再加方程进入，例如平方和、乘积等等。这个就有了多个方程求解多个未知数了</p>
+<p>思考了一下下，发现需要注意的点就是，加入的方程需要满足<strong>对称性</strong>，和已有式子的不相关性。<br>（虽然觉得在多台情况比较复杂时，可能采用计数+达到数量不存储可以更简单）</p>
 
                 
             </div>
@@ -404,7 +447,7 @@
                     </i>
                 </span>
                 <span class="reprint-info">
-                    <a href="http://xjmxyt.github.io/2022/12/15/MIT6-824%E2%80%94%E2%80%94GFS%E6%96%87%E4%BB%B6%E7%B3%BB%E7%BB%9F/">http://xjmxyt.github.io/2022/12/15/MIT6-824%E2%80%94%E2%80%94GFS%E6%96%87%E4%BB%B6%E7%B3%BB%E7%BB%9F/</a>
+                    <a href="http://xjmxyt.github.io/2022/12/17/%E7%BC%96%E7%A8%8B%E4%B9%8B%E7%BE%8E%E9%98%85%E8%AF%BB%E7%AC%94%E8%AE%B0/">http://xjmxyt.github.io/2022/12/17/%E7%BC%96%E7%A8%8B%E4%B9%8B%E7%BE%8E%E9%98%85%E8%AF%BB%E7%AC%94%E8%AE%B0/</a>
                 </span>
             </div>
             <div class="reprint__notice">
@@ -442,8 +485,8 @@
                     
                         <div class="article-tag">
                             
-                                <a href="/tags/%E5%88%86%E5%B8%83%E5%BC%8F%E7%B3%BB%E7%BB%9F/">
-                                    <span class="chip bg-color">分布式系统</span>
+                                <a href="/tags/%E7%BC%96%E7%A8%8B/">
+                                    <span class="chip bg-color">编程</span>
                                 </a>
                             
                         </div>
@@ -522,9 +565,10 @@
 <article id="prenext-posts" class="prev-next articles">
     <div class="row article-row">
         
-        <div class="article col s12 m6" data-aos="fade-up">
+        <div class="article col s12 m6" data-aos="fade-up" data-aos="fade-up">
             <div class="article-badge left-badge text-color">
-                <i class="fas fa-chevron-left"></i>&nbsp;上一篇</div>
+                <i class="far fa-dot-circle"></i>&nbsp;本篇
+            </div>
             <div class="card">
                 <a href="/2022/12/17/%E7%BC%96%E7%A8%8B%E4%B9%8B%E7%BE%8E%E9%98%85%E8%AF%BB%E7%AC%94%E8%AE%B0/">
                     <div class="card-image">
@@ -542,9 +586,9 @@
                         
                     </div>
                     <div class="publish-info">
-                        <span class="publish-date">
-                            <i class="far fa-clock fa-fw icon-date"></i>2022-12-17
-                        </span>
+                            <span class="publish-date">
+                                <i class="far fa-clock fa-fw icon-date"></i>2022-12-17
+                            </span>
                         <span class="publish-author">
                             
                             <i class="fas fa-user fa-fw"></i>
@@ -553,6 +597,7 @@
                         </span>
                     </div>
                 </div>
+
                 
                 <div class="card-action article-tags">
                     
@@ -571,13 +616,13 @@
                 下一篇&nbsp;<i class="fas fa-chevron-right"></i>
             </div>
             <div class="card">
-                <a href="/2022/12/15/MIT6-824%E2%80%94%E2%80%94Primary-Backup-Replication/">
+                <a href="/2022/12/15/MIT6-824%E2%80%94%E2%80%94GFS%E6%96%87%E4%BB%B6%E7%B3%BB%E7%BB%9F/">
                     <div class="card-image">
                         
                         
-                        <img src="/medias/featureimages/11.jpg" class="responsive-img" alt="MIT6.824——Primary-Backup Replication">
+                        <img src="/medias/featureimages/11.jpg" class="responsive-img" alt="MIT6.824——GFS文件系统">
                         
-                        <span class="card-title">MIT6.824——Primary-Backup Replication</span>
+                        <span class="card-title">MIT6.824——GFS文件系统</span>
                     </div>
                 </a>
                 <div class="card-content article-content">
