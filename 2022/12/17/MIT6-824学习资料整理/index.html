@@ -390,6 +390,36 @@ Cache Consis">
 <h3 id="实验介绍"><a href="#实验介绍" class="headerlink" title="实验介绍"></a>实验介绍</h3><p><a target="_blank" rel="noopener" href="https://juejin.cn/post/7121928506476363789">lab 2中文版</a></p>
 <h3 id="他人经验"><a href="#他人经验" class="headerlink" title="他人经验"></a>他人经验</h3><p><a target="_blank" rel="noopener" href="https://github.com/OneSizeFitsQuorum/MIT6.824-2021">lab1-lab4的思路分享</a></p>
 <p><a target="_blank" rel="noopener" href="https://zhuanlan.zhihu.com/p/464701798">mit6.824 Lab2 总结</a></p>
+<h3 id="其他"><a href="#其他" class="headerlink" title="其他"></a>其他</h3><h4 id="锁的使用"><a href="#锁的使用" class="headerlink" title="锁的使用"></a>锁的使用</h4><p>Rule1: 当拥有了超过一个goroutine需要使用的资源，并且至少有一个goroutine会进行更改时，需要加锁，可以使用Go race detector去检测</p>
+<p>Rule2: 当有一系列对共享数据的修改，并且如果中途被打断会造成程序异常时，需要加锁，例如</p>
+<pre class="line-numbers language-go" data-language="go"><code class="language-go">rf<span class="token punctuation">.</span>mu<span class="token punctuation">.</span><span class="token function">Lock</span><span class="token punctuation">(</span><span class="token punctuation">)</span>
+rf<span class="token punctuation">.</span>currentTerm <span class="token operator">+=</span> <span class="token number">1</span>
+rf<span class="token punctuation">.</span>state <span class="token operator">=</span> Candidate
+rf<span class="token punctuation">.</span>mu<span class="token punctuation">.</span><span class="token function">Unlock</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span></span></code></pre>
+<p>Rule3: 当进行一系列数据的读取，并且在中途其他goroutine对数据进行修改会造成程序错误时，例如</p>
+<pre class="line-numbers language-go" data-language="go"><code class="language-go">rf<span class="token punctuation">.</span>mu<span class="token punctuation">.</span><span class="token function">Lock</span><span class="token punctuation">(</span><span class="token punctuation">)</span>
+<span class="token keyword">if</span> args<span class="token punctuation">.</span>Term <span class="token operator">></span> rf<span class="token punctuation">.</span>currentTerm <span class="token punctuation">&#123;</span>
+ rf<span class="token punctuation">.</span>currentTerm <span class="token operator">=</span> args<span class="token punctuation">.</span>Term
+<span class="token punctuation">&#125;</span>
+rf<span class="token punctuation">.</span>mu<span class="token punctuation">.</span><span class="token function">Unlock</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+<p>如果在第二句和第三句之间，被其他打断，可能会不满足if条件，导致<code>rf.currentTerm</code>被修改为更小的值</p>
+<p>Rule4: 在执行需要wait(reading a Go channel, sending on a channel, waiting for a timer, call time.Sleep())或者send an RPC(and waiting for the reply)的语句之前一定要先释放锁</p>
+<p>Rule5: 小心<code>drop</code>然后<code>re-acquire</code>锁，因为中间被打断可能也会有数据的改变</p>
+<pre class="line-numbers language-go" data-language="go"><code class="language-go">rf<span class="token punctuation">.</span>mu<span class="token punctuation">.</span><span class="token function">Lock</span><span class="token punctuation">(</span><span class="token punctuation">)</span>
+rf<span class="token punctuation">.</span>currentTerm <span class="token operator">+=</span> <span class="token number">1</span>
+rf<span class="token punctuation">.</span>state <span class="token operator">=</span> Candidate
+<span class="token keyword">for</span> <span class="token operator">&lt;</span>each peer<span class="token operator">></span> <span class="token punctuation">&#123;</span>
+  <span class="token keyword">go</span> <span class="token keyword">func</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token punctuation">&#123;</span>
+    rf<span class="token punctuation">.</span>mu<span class="token punctuation">.</span><span class="token function">Lock</span><span class="token punctuation">(</span><span class="token punctuation">)</span>
+    args<span class="token punctuation">.</span>Term <span class="token operator">=</span> rf<span class="token punctuation">.</span>currentTerm
+    rf<span class="token punctuation">.</span>mu<span class="token punctuation">.</span><span class="token function">Unlock</span><span class="token punctuation">(</span><span class="token punctuation">)</span>
+    <span class="token function">Call</span><span class="token punctuation">(</span><span class="token string">"Raft.RequestVote"</span><span class="token punctuation">,</span> <span class="token operator">&amp;</span>args<span class="token punctuation">,</span> <span class="token operator">...</span><span class="token punctuation">)</span>
+    <span class="token comment">// handle the reply...</span>
+  <span class="token punctuation">&#125;</span> <span class="token punctuation">(</span><span class="token punctuation">)</span>
+<span class="token punctuation">&#125;</span>
+rf<span class="token punctuation">.</span>mu<span class="token punctuation">.</span><span class="token function">Unlock</span><span class="token punctuation">(</span><span class="token punctuation">)</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+<p>这里<code>goroutine</code>内<code>rf.currentTerm</code>的值和<code>goroutine</code>外面可能会有不同。因此在传入时就应该作为参数，在进行handle reply时，需要检查<code>rf.currentTerm</code>和做决定时是一样的</p>
+<p>简单的编程建议：识别goroutine会开始的所有地方(RPC handlers, 在Make中创建的background goroutines)，在最开始都获取锁，只有在结束的时候才释放锁。之后检查Rule 4: 找到wait的地方，加上lock release和re-acquire。</p>
 
                 
             </div>
@@ -534,18 +564,17 @@ Cache Consis">
 <article id="prenext-posts" class="prev-next articles">
     <div class="row article-row">
         
-        <div class="article col s12 m6" data-aos="fade-up" data-aos="fade-up">
+        <div class="article col s12 m6" data-aos="fade-up">
             <div class="article-badge left-badge text-color">
-                <i class="far fa-dot-circle"></i>&nbsp;本篇
-            </div>
+                <i class="fas fa-chevron-left"></i>&nbsp;上一篇</div>
             <div class="card">
-                <a href="/2022/12/17/MIT6-824%E5%AD%A6%E4%B9%A0%E8%B5%84%E6%96%99%E6%95%B4%E7%90%86/">
+                <a href="/2022/12/20/libevent%E5%BA%93%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/">
                     <div class="card-image">
                         
                         
-                        <img src="/medias/featureimages/5.jpg" class="responsive-img" alt="MIT6.824学习资料整理">
+                        <img src="/medias/featureimages/4.jpg" class="responsive-img" alt="libevent库学习笔记">
                         
-                        <span class="card-title">MIT6.824学习资料整理</span>
+                        <span class="card-title">libevent库学习笔记</span>
                     </div>
                 </a>
                 <div class="card-content article-content">
@@ -555,9 +584,9 @@ Cache Consis">
                         
                     </div>
                     <div class="publish-info">
-                            <span class="publish-date">
-                                <i class="far fa-clock fa-fw icon-date"></i>2022-12-17
-                            </span>
+                        <span class="publish-date">
+                            <i class="far fa-clock fa-fw icon-date"></i>2022-12-20
+                        </span>
                         <span class="publish-author">
                             
                             <i class="fas fa-user fa-fw"></i>
@@ -565,15 +594,6 @@ Cache Consis">
                             
                         </span>
                     </div>
-                </div>
-
-                
-                <div class="card-action article-tags">
-                    
-                    <a href="/tags/%E5%88%86%E5%B8%83%E5%BC%8F%E7%B3%BB%E7%BB%9F/">
-                        <span class="chip bg-color">分布式系统</span>
-                    </a>
-                    
                 </div>
                 
             </div>
@@ -805,7 +825,7 @@ Cache Consis">
         <div class="col s12 m8 l8 copy-right">
             Copyright&nbsp;&copy;
             
-                <span id="year">2022</span>
+                <span id="year">2022-2023</span>
             
             <a href="/about" target="_blank">Jinman Xie</a>
             |&nbsp;Powered by&nbsp;<a href="https://hexo.io/" target="_blank">Hexo</a>

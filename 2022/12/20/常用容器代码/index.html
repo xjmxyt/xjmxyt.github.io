@@ -4,11 +4,15 @@
 
 <head>
     <meta charset="utf-8">
-    <meta name="keywords" content="gcc使用, xjmxyt的小空间">
-    <meta name="description" content="gcc编译编译的四个步骤
-预处理(gcc -E)：展开宏、头文件，替换条件编译、删除注释、空行、空白(hello.i)
-编译(gcc -S)：检查语法规范，得到汇编码(hello.s)
-汇编(gcc -c)：将汇编指令翻译成机器码(hell">
+    <meta name="keywords" content="常用容器代码, xjmxyt的小空间">
+    <meta name="description" content="智能指针#include &amp;lt;iostream&amp;gt;
+#include &amp;lt;memory&amp;gt;
+
+using namespace std;
+
+template&amp;lt;class T&amp;gt;
+
+class my_shared_pt">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
     <meta name="renderer" content="webkit|ie-stand|ie-comp">
@@ -20,7 +24,7 @@
     <!-- Global site tag (gtag.js) - Google Analytics -->
 
 
-    <title>gcc使用 | xjmxyt的小空间</title>
+    <title>常用容器代码 | xjmxyt的小空间</title>
     <link rel="icon" type="image/png" href="/favicon.png">
     
 
@@ -293,12 +297,12 @@
 
 
 
-<div class="bg-cover pd-header post-cover" style="background-image: url('/medias/featureimages/16.jpg')">
+<div class="bg-cover pd-header post-cover" style="background-image: url('/medias/featureimages/21.jpg')">
     <div class="container" style="right: 0px;left: 0px;">
         <div class="row">
             <div class="col s12 m12 l12">
                 <div class="brand">
-                    <h1 class="description center-align post-title">gcc使用</h1>
+                    <h1 class="description center-align post-title">常用容器代码</h1>
                 </div>
             </div>
         </div>
@@ -320,13 +324,9 @@
             <div class="row tag-cate">
                 <div class="col s7">
                     
-                    <div class="article-tag">
-                        
-                            <a href="/tags/linux/">
-                                <span class="chip bg-color">linux</span>
-                            </a>
-                        
-                    </div>
+                          <div class="article-tag">
+                            <span class="chip bg-color">无标签</span>
+                          </div>
                     
                 </div>
                 <div class="col s5 right-align">
@@ -338,7 +338,7 @@
                 
                 <div class="post-date info-break-policy">
                     <i class="far fa-calendar-minus fa-fw"></i>发布日期:&nbsp;&nbsp;
-                    2022-12-02
+                    2022-12-20
                 </div>
                 
 
@@ -362,38 +362,333 @@
 
         <div class="card-content article-card-content">
             <div id="articleContent">
-                <h2 id="gcc编译"><a href="#gcc编译" class="headerlink" title="gcc编译"></a>gcc编译</h2><h3 id="编译的四个步骤"><a href="#编译的四个步骤" class="headerlink" title="编译的四个步骤"></a>编译的四个步骤</h3><ul>
-<li>预处理(<code>gcc -E</code>)：展开宏、头文件，替换条件编译、删除注释、空行、空白(<code>hello.i</code>)</li>
-<li>编译(<code>gcc -S</code>)：检查语法规范，得到汇编码(<code>hello.s</code>)</li>
-<li>汇编(<code>gcc -c</code>)：将汇编指令翻译成机器码(<code>hello.o</code>)</li>
-<li>链接：<strong>数据段合并，数据地址回填</strong>（<code>a.out</code>）</li>
-</ul>
-<p>消耗时间和系统资源最多的是<strong>编译阶段</strong></p>
-<h3 id="常用参数"><a href="#常用参数" class="headerlink" title="常用参数"></a>常用参数</h3><pre class="line-numbers language-bash" data-language="bash"><code class="language-bash">-I: 指定头文件所在目录位置
--c：只做预处理 编译 汇编操作
--g：编译时添加调试文件
--On: <span class="token assign-left variable">n</span><span class="token operator">=</span><span class="token number">0</span>~3, 优化程度
--Wall: 显示所有的警告信息
--D: 向程序中注册宏<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
-<h3 id="动态库和静态库"><a href="#动态库和静态库" class="headerlink" title="动态库和静态库"></a>动态库和静态库</h3><p>使用场景</p>
-<ul>
-<li>动态库：对时间要求较低，对空间要求较高</li>
-<li>静态库：对空间要求较低，对时间要求较高</li>
-</ul>
-<h4 id="制作静态库"><a href="#制作静态库" class="headerlink" title="制作静态库"></a>制作静态库</h4><pre class="line-numbers language-bash" data-language="bash"><code class="language-bash">先用gcc -c生成.o文件，再用ar生成库名
-ar rcs mylib.a add.o sub.o<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span></span></code></pre>
+                <h2 id="智能指针"><a href="#智能指针" class="headerlink" title="智能指针"></a>智能指针</h2><pre class="line-numbers language-c++" data-language="c++"><code class="language-c++">#include &lt;iostream&gt;
+#include &lt;memory&gt;
 
-<h4 id="制作动态库"><a href="#制作动态库" class="headerlink" title="制作动态库"></a>制作动态库</h4><p>需要生成与位置无关的代码，在绑定动态库时会延迟绑定，通过汇编中@plt中进行判断</p>
-<pre class="line-numbers language-bash" data-language="bash"><code class="language-bash">gcc add.c <span class="token parameter variable">-o</span> add.o -fPIC<span class="token punctuation">(</span>生成位置无关代码<span class="token punctuation">)</span>
-gcc <span class="token parameter variable">-shared</span> lib库名.so add.o sub.o<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span></span></code></pre>
-<p>编译可执行文件时，用<code>-l</code>指定库名，<code>-L</code>指定路径</p>
-<pre class="line-numbers language-bash" data-language="bash"><code class="language-bash">gcc test.c <span class="token parameter variable">-o</span> a.out <span class="token parameter variable">-lmymath</span> -L./lib -I./include<span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>
-<p>链接器：工作在链接阶段，工作时需要<code>-l</code>和<code>-L</code></p>
-<p>动态链接器：工作在运行阶段</p>
-<p>由于动态库时运行时加载的，程序需要找到动态库的位置，需要设置环境变量，<code>export LD_LIBRARY_PATH=动态库路径</code></p>
-<p>查看程序执行时要加载哪些动态库以及动态库路径</p>
-<pre class="line-numbers language-bash" data-language="bash"><code class="language-bash">ldd a.out<span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>
+using namespace std;
 
+template&lt;class T&gt;
+
+class my_shared_ptr&#123;
+public:
+    my_shared_ptr(): _useCnt(new size_t(0)), _ptr(new T()) &#123;&#125;
+
+    explicit my_shared_ptr(T *p): _ptr(p), _useCnt(new size_t)&#123;
+        if (p)&#123;
+            *_useCnt &#x3D; 1;
+        &#125;else&#123;
+            *_useCnt &#x3D; 0;
+        &#125;
+    &#125;
+
+    &#x2F;&#x2F; copy construct 
+    my_shared_ptr(const my_shared_ptr&amp; other)&#123;
+        _ptr &#x3D; other._ptr;
+        _useCnt &#x3D; other._useCnt;
+        (*_useCnt) ++;
+    &#125;
+
+    &#x2F;&#x2F; copy assignment 
+    my_shared_ptr&amp; operator&#x3D; (const my_shared_ptr&amp; other)&#123;
+        if(this !&#x3D; &amp;other)&#123;
+            if(_ptr)&#123;
+                --(*_useCnt);
+                if(*_useCnt &#x3D;&#x3D; 0)&#123;
+                    delete _useCnt;
+                    delete _ptr;
+                &#125;
+                _useCnt &#x3D; other._useCnt;
+                _ptr &#x3D; other._ptr;
+                ++(*_useCnt);
+            &#125;
+        &#125;
+        return *this;
+    &#125;
+
+    int use_count()&#123;
+        return *_useCnt;
+    &#125;
+
+    ~my_shared_ptr()&#123;
+        if(!_ptr || ((*_useCnt)&#x3D;&#x3D;1))&#123;
+            delete _useCnt;
+            delete _ptr;
+        &#125;else&#123;
+            --(*_useCnt);
+        &#125;
+    &#125;
+private:
+    size_t * _useCnt;
+    T * _ptr;
+&#125;;
+
+int main()&#123;
+    my_shared_ptr&lt;int&gt; p1(new int(1));
+    cout &lt;&lt; &quot;p1 cnt:&quot; &lt;&lt; p1.use_count() &lt;&lt; endl;
+
+    &#123;
+        my_shared_ptr&lt;int&gt; p2(p1);
+        cout &lt;&lt; &quot;p2 cnt:&quot; &lt;&lt; p2.use_count() &lt;&lt; endl;
+        cout &lt;&lt; &quot;p1 cnt:&quot; &lt;&lt; p1.use_count() &lt;&lt; endl;
+    &#125;
+
+    cout &lt;&lt; &quot;p1 cnt:&quot; &lt;&lt; p1.use_count() &lt;&lt; endl;
+
+    my_shared_ptr&lt;int&gt; p4;
+    cout &lt;&lt; &quot;p4 cnt: &quot; &lt;&lt; p4.use_count() &lt;&lt; endl;
+
+    p4 &#x3D; p1;
+    cout &lt;&lt; &quot;p1 cnt:&quot; &lt;&lt; p1.use_count() &lt;&lt; &quot; p4 cnt:&quot; &lt;&lt; p4.use_count() &lt;&lt; endl;
+    return 0;
+&#125;<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+
+<h2 id="LRU"><a href="#LRU" class="headerlink" title="LRU"></a>LRU</h2><h3 id="用stl中list版本"><a href="#用stl中list版本" class="headerlink" title="用stl中list版本"></a>用stl中<code>list</code>版本</h3><pre class="line-numbers language-c++" data-language="c++"><code class="language-c++">#include &lt;iostream&gt;
+#include &lt;unordered_map&gt;
+#include &lt;list&gt;
+
+using namespace std;
+
+class LRUCache&#123;
+public:
+    LRUCache(int capacity): cap_(capacity) &#123;&#125;
+    int get(int k)&#123;
+        auto it &#x3D; mp_.find(k);
+        if(it &#x3D;&#x3D; mp_.end()) return -1;
+        list_.splice(list_.begin(), list_, it-&gt;second);
+        return it-&gt;second-&gt;second;
+    &#125;
+    void put(int k, int v)&#123;
+        auto it &#x3D; mp_.find(k);
+        if(it !&#x3D; mp_.end())&#123;
+            list_.erase(it-&gt;second);
+        &#125;
+        list_.push_front(make_pair(k, v));
+        mp_[k] &#x3D; list_.begin();
+        if(mp_.size() &gt; cap_)&#123;
+            int k &#x3D; list_.rbegin()-&gt;first;
+            list_.pop_back();
+            mp_.erase(k);
+        &#125;
+    &#125;
+private:
+    list&lt;pair&lt;int, int&gt;&gt; list_;
+    unordered_map&lt;int, list&lt;pair&lt;int, int&gt;&gt;::iterator &gt; mp_;
+    int cap_;
+
+&#125;;<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+<h3 id="手写list版本"><a href="#手写list版本" class="headerlink" title="手写list版本"></a>手写<code>list</code>版本</h3><p>写的时候一定要注意<code>head</code>和<code>tail</code>为空时的边界条件</p>
+<pre class="line-numbers language-c++" data-language="c++"><code class="language-c++">#include &lt;iostream&gt;
+#include &lt;unordered_map&gt;
+#include &lt;list&gt;
+
+using namespace std;
+
+struct LRUNode&#123;
+    int key;
+    int val;
+    LRUNode *prev, *next;
+    LRUNode(int key, int val) : key(key), val(val), prev(nullptr), next(nullptr)&#123;
+
+    &#125;
+&#125;;
+
+class LRUCache&#123;
+public:
+    LRUCache(int capacity): cap_(capacity), head_(nullptr), tail_(nullptr) &#123;&#125;
+    int get(int k)&#123;
+        auto it &#x3D; mp_.find(k);
+        if(it &#x3D;&#x3D; mp_.end()) return -1;
+        LRUNode *node &#x3D; it-&gt;second;
+        remove(node);
+        insertFront(node);
+        return node-&gt;val;
+    &#125;
+    void put(int k, int v)&#123;
+        auto it &#x3D; mp_.find(k);
+        if(it !&#x3D; mp_.end())&#123;
+            LRUNode *node &#x3D; it-&gt;second;
+            node-&gt;val &#x3D; v;
+            remove(node);
+            insertFront(node);
+        &#125;else&#123;
+            LRUNode *node &#x3D; new LRUNode(k, v);
+            mp_[k] &#x3D; node;
+            insertFront(node);
+            if(mp_.size() &gt; cap_)&#123;
+                mp_.erase(tail_-&gt;key);
+                removeLast();
+            &#125;
+        &#125;
+    &#125;
+    void remove(LRUNode *node)&#123;
+        if(node-&gt;prev) node-&gt;prev-&gt;next &#x3D; node-&gt;next;
+        else head_ &#x3D; node-&gt;next;
+        if(node-&gt;next) node-&gt;next-&gt;prev &#x3D; node-&gt;prev;
+        else tail_ &#x3D; node-&gt;prev;
+    &#125;
+    void insertFront(LRUNode *node)&#123;
+        if(head_ &#x3D;&#x3D; nullptr)&#123;
+            head_ &#x3D; node;
+            tail_ &#x3D; node;
+            return;
+        &#125; 
+        node-&gt;next &#x3D; head_;
+        node-&gt;prev &#x3D; nullptr;
+        head_-&gt;prev &#x3D; node;
+        head_ &#x3D; node;
+    &#125;
+    void removeLast()&#123;
+        LRUNode *node &#x3D; tail_-&gt;prev;
+        node-&gt;next &#x3D; nullptr;
+        delete(tail_);
+        tail_ &#x3D; node;
+    &#125;
+private:
+    int cap_;
+    unordered_map&lt;int, LRUNode *&gt; mp_;
+    LRUNode *head_, *tail_;
+&#125;;<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+<h3 id="智能指针管理资源"><a href="#智能指针管理资源" class="headerlink" title="智能指针管理资源"></a>智能指针管理资源</h3><pre class="line-numbers language-c++" data-language="c++"><code class="language-c++">#include &lt;iostream&gt;
+#include &lt;unordered_map&gt;
+#include &lt;list&gt;
+#include &lt;memory&gt;
+
+using namespace std;
+
+struct LRUNode&#123;
+    int key;
+    int val;
+    shared_ptr&lt;LRUNode&gt; prev, next;
+    LRUNode(int key, int val) : key(key), val(val), prev(nullptr), next(nullptr)&#123;
+
+    &#125;
+&#125;;
+
+class LRUCache&#123;
+public:
+    LRUCache(int capacity): cap_(capacity), head_(nullptr), tail_(nullptr) &#123;&#125;
+    int get(int k)&#123;
+        auto it &#x3D; mp_.find(k);
+        if(it &#x3D;&#x3D; mp_.end()) return -1;
+        shared_ptr&lt;LRUNode&gt;node &#x3D; it-&gt;second;
+        remove(node);
+        insertFront(node);
+        return node-&gt;val;
+    &#125;
+    void put(int k, int v)&#123;
+        auto it &#x3D; mp_.find(k);
+        if(it !&#x3D; mp_.end())&#123;
+            shared_ptr&lt;LRUNode&gt;node &#x3D; it-&gt;second;
+            node-&gt;val &#x3D; v;
+            remove(node);
+            insertFront(node);
+        &#125;else&#123;
+            shared_ptr&lt;LRUNode&gt; node &#x3D; make_shared&lt;LRUNode&gt;(k, v);
+            mp_[k] &#x3D; node;
+            insertFront(node);
+            if(mp_.size() &gt; cap_)&#123;
+                mp_.erase(tail_-&gt;key);
+                removeLast();
+            &#125;
+        &#125;
+    &#125;
+    void remove(shared_ptr&lt;LRUNode&gt; node)&#123;
+        if(node-&gt;prev) node-&gt;prev-&gt;next &#x3D; node-&gt;next;
+        else head_ &#x3D; node-&gt;next;
+        if(node-&gt;next) node-&gt;next-&gt;prev &#x3D; node-&gt;prev;
+        else tail_ &#x3D; node-&gt;prev;
+    &#125;
+    void insertFront(shared_ptr&lt;LRUNode&gt; node)&#123;
+        if(head_ &#x3D;&#x3D; nullptr)&#123;
+            head_ &#x3D; node;
+            tail_ &#x3D; node;
+            return;
+        &#125; 
+        node-&gt;next &#x3D; head_;
+        node-&gt;prev &#x3D; nullptr;
+        head_-&gt;prev &#x3D; node;
+        head_ &#x3D; node;
+    &#125;
+    void removeLast()&#123;
+        shared_ptr&lt;LRUNode&gt; node &#x3D; tail_-&gt;prev;
+        node-&gt;next &#x3D; nullptr;
+        tail_ &#x3D; node;
+    &#125;
+private:
+    int cap_;
+    unordered_map&lt;int, shared_ptr&lt;LRUNode&gt;&gt; mp_;
+    shared_ptr&lt;LRUNode&gt; head_, tail_;
+&#125;;<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+<h2 id="heap"><a href="#heap" class="headerlink" title="heap"></a>heap</h2><p>第一个下标从1开始，对于下标为<code>pos</code>的元素，左边元素的下标是<code>2*pos</code>，右边的是<code>2*pos+1</code></p>
+<pre class="line-numbers language-c++" data-language="c++"><code class="language-c++">#include &lt;iostream&gt;
+#include &lt;vector&gt;
+
+using namespace std;
+
+template&lt;class T&gt;
+class MyHeap&#123;
+public:
+    MyHeap(int capacity) : cap_(capacity), size_(0) &#123;
+        h_.resize(cap_);
+    &#125;
+
+    T pop()&#123;
+        T val &#x3D; h_[1];
+        h_[1] &#x3D; h_[size_--];
+        down(1);
+        return val;
+    &#125;
+
+    void put(T val)&#123;
+        h_[++size_] &#x3D; val;
+        up(size_);
+    &#125;
+
+protected:
+    void up(int pos)&#123;
+        while(pos&gt;1)&#123;
+            &#x2F;&#x2F;cout &lt;&lt; &quot;up:&quot; &lt;&lt; pos &lt;&lt; endl;  
+            int parent &#x3D; pos&#x2F;2;
+            if(h_[pos]&lt;h_[parent])&#123;
+                swap(h_[pos],h_[parent]);
+                pos &#x3D; parent;
+            &#125;else&#123;
+                break;
+            &#125;
+        &#125;
+    &#125;
+
+    void down(int pos)&#123;
+        while(pos&lt;&#x3D;size_)&#123;
+            int l_child &#x3D; 2 * pos, r_child &#x3D; 2 * pos + 1;
+            if(l_child&gt;size_) break;
+            int min_child &#x3D; (l_child &#x3D;&#x3D; size_ || h_[l_child]&lt;h_[r_child])? l_child : r_child; 
+            if(h_[pos]&gt;h_[min_child])&#123;
+                swap(h_[pos],h_[min_child]);
+                pos &#x3D; min_child;
+            &#125;
+            else&#123;
+                break;
+            &#125;
+        &#125;
+    &#125;
+
+private:
+    vector&lt;T&gt; h_;
+    int cap_;
+    int size_;
+&#125;;
+
+int main()&#123;
+    MyHeap&lt;int&gt; h(10);
+    h.put(10);
+    h.put(13);
+    h.put(9);
+    h.put(20);
+    cout &lt;&lt; h.pop() &lt;&lt; endl;
+    cout &lt;&lt; h.pop() &lt;&lt; endl;
+    cout &lt;&lt; h.pop() &lt;&lt; endl;
+&#125;<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
                 
             </div>
             <hr/>
@@ -419,7 +714,7 @@ gcc <span class="token parameter variable">-shared</span> lib库名.so add.o sub
                     </i>
                 </span>
                 <span class="reprint-info">
-                    <a href="http://xjmxyt.github.io/2022/12/02/gcc%E4%BD%BF%E7%94%A8/">http://xjmxyt.github.io/2022/12/02/gcc%E4%BD%BF%E7%94%A8/</a>
+                    <a href="http://xjmxyt.github.io/2022/12/20/%E5%B8%B8%E7%94%A8%E5%AE%B9%E5%99%A8%E4%BB%A3%E7%A0%81/">http://xjmxyt.github.io/2022/12/20/%E5%B8%B8%E7%94%A8%E5%AE%B9%E5%99%A8%E4%BB%A3%E7%A0%81/</a>
                 </span>
             </div>
             <div class="reprint__notice">
@@ -456,11 +751,7 @@ gcc <span class="token parameter variable">-shared</span> lib库名.so add.o sub
                 <div class="post-meta__tag-list" style="display: inline-block;">
                     
                         <div class="article-tag">
-                            
-                                <a href="/tags/linux/">
-                                    <span class="chip bg-color">linux</span>
-                                </a>
-                            
+                            <span class="chip bg-color">无标签</span>
                         </div>
                     
                 </div>
@@ -541,13 +832,13 @@ gcc <span class="token parameter variable">-shared</span> lib库名.so add.o sub
             <div class="article-badge left-badge text-color">
                 <i class="fas fa-chevron-left"></i>&nbsp;上一篇</div>
             <div class="card">
-                <a href="/2022/12/03/makefile/">
+                <a href="/2022/12/25/miniob%E9%A1%B9%E7%9B%AE%E6%80%BB%E7%BB%93/">
                     <div class="card-image">
                         
                         
-                        <img src="/medias/featureimages/18.jpg" class="responsive-img" alt="makefile">
+                        <img src="/medias/featureimages/7.jpg" class="responsive-img" alt="miniob项目总结">
                         
-                        <span class="card-title">makefile</span>
+                        <span class="card-title">miniob项目总结</span>
                     </div>
                 </a>
                 <div class="card-content article-content">
@@ -558,27 +849,15 @@ gcc <span class="token parameter variable">-shared</span> lib库名.so add.o sub
                     </div>
                     <div class="publish-info">
                         <span class="publish-date">
-                            <i class="far fa-clock fa-fw icon-date"></i>2022-12-03
+                            <i class="far fa-clock fa-fw icon-date"></i>2022-12-25
                         </span>
                         <span class="publish-author">
                             
-                            <i class="fas fa-bookmark fa-fw icon-category"></i>
-                            
-                            <a href="/categories/linux/" class="post-category">
-                                    linux
-                                </a>
-                            
+                            <i class="fas fa-user fa-fw"></i>
+                            Jinman Xie
                             
                         </span>
                     </div>
-                </div>
-                
-                <div class="card-action article-tags">
-                    
-                    <a href="/tags/linux/">
-                        <span class="chip bg-color">linux</span>
-                    </a>
-                    
                 </div>
                 
             </div>
@@ -590,13 +869,13 @@ gcc <span class="token parameter variable">-shared</span> lib库名.so add.o sub
                 下一篇&nbsp;<i class="fas fa-chevron-right"></i>
             </div>
             <div class="card">
-                <a href="/2022/12/01/linux%E5%B8%B8%E7%94%A8%E6%8C%87%E4%BB%A4/">
+                <a href="/2022/12/20/libevent%E5%BA%93%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/">
                     <div class="card-image">
                         
                         
-                        <img src="/medias/featureimages/23.jpg" class="responsive-img" alt="linux常用指令">
+                        <img src="/medias/featureimages/4.jpg" class="responsive-img" alt="libevent库学习笔记">
                         
-                        <span class="card-title">linux常用指令</span>
+                        <span class="card-title">libevent库学习笔记</span>
                     </div>
                 </a>
                 <div class="card-content article-content">
@@ -607,7 +886,7 @@ gcc <span class="token parameter variable">-shared</span> lib库名.so add.o sub
                     </div>
                     <div class="publish-info">
                             <span class="publish-date">
-                                <i class="far fa-clock fa-fw icon-date"></i>2022-12-01
+                                <i class="far fa-clock fa-fw icon-date"></i>2022-12-20
                             </span>
                         <span class="publish-author">
                             
@@ -616,14 +895,6 @@ gcc <span class="token parameter variable">-shared</span> lib库名.so add.o sub
                             
                         </span>
                     </div>
-                </div>
-                
-                <div class="card-action article-tags">
-                    
-                    <a href="/tags/linux/">
-                        <span class="chip bg-color">linux</span>
-                    </a>
-                    
                 </div>
                 
             </div>
