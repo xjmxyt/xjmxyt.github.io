@@ -4,11 +4,10 @@
 
 <head>
     <meta charset="utf-8">
-    <meta name="keywords" content="miniob项目总结, xjmxyt的小空间">
-    <meta name="description" content="存储部分
-BufferPoolManager管理file到BufferPool的映射关系（一对多）
-BufferPool管理文件和磁盘的映射关系
-BPFrameManager管理文件和Frame之间的关系，从fd+page_num就可以获取">
+    <meta name="keywords" content="2023春招笔试记录, xjmxyt的小空间">
+    <meta name="description" content="Morgan
+Profit Analysis
+A data analyst wants to analyze the performance of his investments in the HackShare stock. The Pn">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
     <meta name="renderer" content="webkit|ie-stand|ie-comp">
@@ -20,7 +19,7 @@ BPFrameManager管理文件和Frame之间的关系，从fd+page_num就可以获�
     <!-- Global site tag (gtag.js) - Google Analytics -->
 
 
-    <title>miniob项目总结 | xjmxyt的小空间</title>
+    <title>2023春招笔试记录 | xjmxyt的小空间</title>
     <link rel="icon" type="image/png" href="/favicon.png">
     
 
@@ -293,12 +292,12 @@ BPFrameManager管理文件和Frame之间的关系，从fd+page_num就可以获�
 
 
 
-<div class="bg-cover pd-header post-cover" style="background-image: url('/medias/featureimages/7.jpg')">
+<div class="bg-cover pd-header post-cover" style="background-image: url('/medias/featureimages/11.jpg')">
     <div class="container" style="right: 0px;left: 0px;">
         <div class="row">
             <div class="col s12 m12 l12">
                 <div class="brand">
-                    <h1 class="description center-align post-title">miniob项目总结</h1>
+                    <h1 class="description center-align post-title">2023春招笔试记录</h1>
                 </div>
             </div>
         </div>
@@ -334,7 +333,7 @@ BPFrameManager管理文件和Frame之间的关系，从fd+page_num就可以获�
                 
                 <div class="post-date info-break-policy">
                     <i class="far fa-calendar-minus fa-fw"></i>发布日期:&nbsp;&nbsp;
-                    2022-12-25
+                    2023-03-18
                 </div>
                 
 
@@ -358,260 +357,101 @@ BPFrameManager管理文件和Frame之间的关系，从fd+page_num就可以获�
 
         <div class="card-content article-card-content">
             <div id="articleContent">
-                <h2 id="存储部分"><a href="#存储部分" class="headerlink" title="存储部分"></a>存储部分</h2><ul>
-<li><code>BufferPoolManager</code>管理<code>file</code>到<code>BufferPool</code>的映射关系（一对多）</li>
-<li><code>BufferPool</code>管理文件和磁盘的映射关系</li>
-<li><code>BPFrameManager</code>管理文件和<code>Frame</code>之间的关系，从<code>fd+page_num</code>就可以获取对应的页</li>
-</ul>
-<pre class="line-numbers language-C++" data-language="C++"><code class="language-C++">struct Page&#123;
-	PageNum page_num;
-    char data[BP_PAGE_DATA_SIZE];
-&#125;;
+                <h2 id="morgan">Morgan</h2>
+<h3 id="profit-analysis">Profit Analysis</h3>
+<p>A data analyst wants to analyze the performance of his investments in the HackShare stock. The PnL of his portfolio is represented by an array prl where pnl[i] represents the profit earned in the ith month that can possibly be negative indicating a loss.</p>
+<p>Given the pnl array of n months, find the maximum net profit (sum of profits) gained in any contiguous segment of months i.e. a subarray of months such that the number of months in the segment does not exceed a given integer k.</p>
+<h4 id="example">Example</h4>
+<p>Giver n=6. pnl = [-3, 4, 3, -2, 2, 5], k=4, We can select the subarray [3, -2, 2, 5] with a total profit 3 + (-2) + 2 + 5 = 8. Note that while the maximum net profit of a subarray can be 12 for the subarray [4, 3, -2, 2, 5] but the length of the subarray will exceed K = 4. Hence, we report 8 as the answer.</p>
+<h4 id="function-description">Function Description</h4>
+<p>Complete the function getMaxProfit in the editor below. getMaxProfit has the following parameters: pnl[n]: An array of integers k. An integer</p>
+<h4 id="solution">Solution</h4>
+<p>用<code>nlog(n)</code>的复杂度，map维护前面元素的最小值，如果超出了k的范围则弹出 <pre class="line-numbers language-c++" data-language="c++"><code class="language-c++">#include &lt;iostream&gt;
+#include &lt;map&gt;
+#include &lt;vector&gt;
 
-struct BPFileHeader&#123;
-	int32_t page_count; &#x2F;&#x2F; 当前文件一共多少页面
-    int32_t allocated_pages; &#x2F;&#x2F; 已经分配了多少页面
+using namespace std;
+
+long getMaxProfit(vector&lt;int&gt; &amp;a, int k)&#123;
+    &#x2F;&#x2F; prefix sum
+    int n &#x3D; a.size();
+    vector&lt;long&gt; s(n+1);
+    for(int i &#x3D; 1; i &lt;&#x3D; n; ++i)&#123;
+        s[i] &#x3D; s[i-1] + a[i-1];
+    &#125;
+    map&lt;long, int, less&lt;long&gt;&gt; sum2pos;
+    sum2pos[0] &#x3D; 0;
+    long ans &#x3D; 0;
+    for(int i &#x3D; 1; i &lt;&#x3D; n; ++i)&#123;
+        while(sum2pos.begin()-&gt;second + k &lt; i) sum2pos.erase(sum2pos.begin());
+        ans &#x3D; max(ans, s[i] - sum2pos.begin()-&gt;first);
+        sum2pos[s[i]] &#x3D; i;
+    &#125;
+    return ans;
 &#125;
 
-class Frame&#123;
-private:
-  bool          dirty_     &#x3D; false;
-  unsigned int  pin_count_ &#x3D; 0;
-  unsigned long acc_time_  &#x3D; 0;
-  int           file_desc_ &#x3D; -1;
-  Page          page_;
-&#125;;
+int main()&#123;
+    vector&lt;int&gt; a &#x3D; &#123;-3, 4, -5, 32, -10, 3, -2, 2, 5&#125;;
+    int k &#x3D; 4;
+    cout &lt;&lt; getMaxProfit(a, k) &lt;&lt; endl;
+&#125;<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre> ### DNA Sequencing Some data scientists are building a utility to analyze palindromic trends in the DNA sequencing of a string. The palindrome transformation cost of a string is defined as the minimum number of characters that need to be changed in it so that it can be rearranged to form a palindrome. For example, the palindrome transformation cost of the string "aabcd" is 1 as we can change the last character 'd' to 'c'so that the string becomes "aabcc" that can be rearranged to "acbca" which is a palindrome.</p>
+<p>Given string dna, find the total sum of palindrome transformation cost of all the substrings of the given string.</p>
+<p>Note: A palindrome is a sequence that reads the same backward as forward, for example, sequences "z", "aba" and "aaa" are palindromes, but sequences "×y", "rank" are not.</p>
+<h4 id="example-1">Example</h4>
+<p>Suppose dna = "abca", substrings of dna with their costs are- - "a", "b", "c", "a", with cost = 0 - "ab", cost = 1, we can change 'b' to 'a' and it becomes "aa" which is a palindrome. - "abc", cost = 1, we can change 'b' to 'c' and it can be rearranged to "cac" which is a palindrome.</p>
+<h4 id="solution-1">Solution</h4>
+<p>用state记录每个字符的奇偶状态，转化为回文串的操作次数为 <strong>奇数字母的个数/2</strong>, 遍历开始节点和长度，从上一个状态中推导下一个状态 <pre class="line-numbers language-c++" data-language="c++"><code class="language-c++">#include &lt;iostream&gt;
+#include &lt;map&gt;
+#include &lt;vector&gt;
 
-class BPFrameManager
-&#123;
-public:
-  Frame *get(int file_desc, PageNum page_num);
-  Frame *alloc(int file_desc, PageNum page_num);
-  Frame *begin_purge();&#x2F;&#x2F;从后往前遍历frames_，找到能被清理的frame
-private:
-  std::mutex lock_;
-  FrameLruCache frames_;
-  FrameAllocator allocator_;
-&#125;;
+using namespace std;
 
-class BufferPoolIterator
-&#123;
-public:
-  BufferPoolIterator();
-  ~BufferPoolIterator();
+#define GETBIT(state, k) (state &gt;&gt; k) &amp; 1
+#define SETBIT(state, k) state |&#x3D; (1 &lt;&lt; k)
+#define CLEARBIT(state, k) state &amp;&#x3D; ~(1 &lt;&lt; k)
 
-  RC init(DiskBufferPool &amp;bp, PageNum start_page &#x3D; 0);
-  bool has_next();
-  PageNum next();
-  RC reset();
-private:
-  common::Bitmap   bitmap_;
-  PageNum  current_page_num_ &#x3D; -1;
-&#125;;
-
-class DiskBufferPool
-&#123;
-public:
-  RC create_file(const char *file_name);
-  RC open_file(const char *file_name);&#x2F;&#x2F;打开文件，加载hdr_frame_和file_header
-  RC flush_page(Frame &amp;frame); &#x2F;&#x2F;将数据刷新写回磁盘，可以从file_desc_和pageNum找到要写入的位置，然后将frame的内容写入
-protected:
-  RC load_page(PageNum page_num, Frame *frame);&#x2F;&#x2F;从file_desc_中加载相应的offset到frame中
-private:
-  BufferPoolManager &amp;bp_manager_;
-  BPFrameManager &amp;   frame_manager_;
-  std::string        file_name_;
-  int                file_desc_ &#x3D; -1;
-  Frame *            hdr_frame_ &#x3D; nullptr;
-  BPFileHeader *     file_header_ &#x3D; nullptr;
-  std::set&lt;PageNum&gt;  disposed_pages;
+int get_trans_cnt(int cnt)&#123;
+    return cnt &#x2F; 2;
 &#125;
 
-class BufferPoolManager&#123;
-private:
-  BPFrameManager frame_manager_&#123;&quot;BufPool&quot;&#125;;
-  std::unordered_map&lt;std::string, DiskBufferPool *&gt; buffer_pools_;
-  std::unordered_map&lt;int, DiskBufferPool *&gt; fd_buffer_pools_;
+long getMaxProfit(string s)&#123;
+    int n &#x3D; s.size();
+    long ans &#x3D; 0;
+    for(int i &#x3D; 0; i &lt; n; ++i)&#123;
+        int cnt &#x3D; 0;
+        int state &#x3D; 0;
+        for(int l &#x3D; 1; i + l - 1 &lt; n; ++l)&#123;
+            int j &#x3D; i + l - 1;
+            int k &#x3D; s[j] - &#39;a&#39;;
+            if(GETBIT(state, k))&#123;
+                &#x2F;&#x2F; already exist
+                cnt --;
+                ans +&#x3D; get_trans_cnt(cnt);
+                CLEARBIT(state, k);
+            &#125;else&#123;
+            	&#x2F;&#x2F; not exist
+                cnt ++;
+                ans +&#x3D; get_trans_cnt(cnt);
+                SETBIT(state, k);
+            &#125;
+        &#125;
+    &#125;
+    return ans;
 &#125;
 
-<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
-
-<h2 id="parse-stage"><a href="#parse-stage" class="headerlink" title="parse stage"></a>parse stage</h2><h3 id="解析部分结构体的定义"><a href="#解析部分结构体的定义" class="headerlink" title="解析部分结构体的定义"></a>解析部分结构体的定义</h3><p>以<code>select</code>为例，分为<code>attribute</code>,<code>relation</code>,<code>condition</code>三个部分，<code>update</code>分为<code>relation_name</code>,<code>attribute_name</code>,<code>value</code>,<code>condition</code>三部分<br>总的说来，<code>attribute</code>是需要更改的属性，<code>relation</code>是涉及到的<code>table</code>的名字，<code>condition</code>是<code>where</code>后面的条件，<code>value</code>是赋予的取值</p>
-<p>在定义了不同的语句之后，用<code>union</code>结构体存储下来，定义<code>Query</code>来表明输入的语句，里面存有<code>union</code>结构体，和表明该结构是什么类型</p>
-<pre class="line-numbers language-c++" data-language="c++"><code class="language-c++">typedef struct _Condition &#123;
-  int left_is_attr;    &#x2F;&#x2F; TRUE if left-hand side is an attribute
-                       &#x2F;&#x2F; 1时，操作符左边是属性名，0时，是属性值
-  Value left_value;    &#x2F;&#x2F; left-hand side value if left_is_attr &#x3D; FALSE
-  RelAttr left_attr;   &#x2F;&#x2F; left-hand side attribute
-  CompOp comp;         &#x2F;&#x2F; comparison operator
-  int right_is_attr;   &#x2F;&#x2F; TRUE if right-hand side is an attribute
-                       &#x2F;&#x2F; 1时，操作符右边是属性名，0时，是属性值
-  RelAttr right_attr;  &#x2F;&#x2F; right-hand side attribute if right_is_attr &#x3D; TRUE 右边的属性
-  Value right_value;   &#x2F;&#x2F; right-hand side value if right_is_attr &#x3D; FALSE
-&#125; Condition;
-
-&#x2F;&#x2F; struct of select
-typedef struct &#123;
-  size_t attr_num;                &#x2F;&#x2F; Length of attrs in Select clause
-  RelAttr attributes[MAX_NUM];    &#x2F;&#x2F; attrs in Select clause
-  size_t relation_num;            &#x2F;&#x2F; Length of relations in Fro clause
-  char *relations[MAX_NUM];       &#x2F;&#x2F; relations in From clause
-  size_t condition_num;           &#x2F;&#x2F; Length of conditions in Where clause
-  Condition conditions[MAX_NUM];  &#x2F;&#x2F; conditions in Where clause
-&#125; Selects;
-&#x2F;&#x2F; struct of update
-typedef struct &#123;
-  char *relation_name;            &#x2F;&#x2F; Relation to update
-  char *attribute_name;           &#x2F;&#x2F; Attribute to update
-  Value value;                    &#x2F;&#x2F; update value
-  size_t condition_num;           &#x2F;&#x2F; Length of conditions in Where clause
-  Condition conditions[MAX_NUM];  &#x2F;&#x2F; conditions in Where clause
-&#125; Updates;
-
-&#x2F;&#x2F; struct of flag and sql_struct
-typedef struct Query &#123;
-  enum SqlCommandFlag flag;
-  union Queries sstr;
-&#125; Query;<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
-<h2 id="resolve-stage"><a href="#resolve-stage" class="headerlink" title="resolve stage"></a>resolve stage</h2><h3 id="stmt"><a href="#stmt" class="headerlink" title="stmt"></a>stmt</h3><p>最关键的模块是<code>Stmt</code>的<code>create_stmt</code>函数(<code>static</code>方法)，所有的<code>Stmt</code>都继承了该类，例如<code>SelectStmt</code>,<code>InsertStmt</code>等，该<code>Stmt</code>会被流转到下一个阶段</p>
-<h3 id="table相关的内存结构"><a href="#table相关的内存结构" class="headerlink" title="table相关的内存结构"></a>table相关的内存结构</h3><p>将最初的<code>sql</code>结构体转化为<code>statement</code>结构体，检查<code>table</code>是否存在，把要用到的<code>table</code>放进<code>stmt</code>中，把<code>*</code>展开为属性放进<code>stmt</code>中，隐式类型转换等等</p>
-<pre class="line-numbers language-c++" data-language="c++"><code class="language-c++">class Field&#123;
-  const Table *table_ &#x3D; nullptr;
-  const FieldMeta *field_ &#x3D; nullptr;
-&#125;
-class FieldMeta&#123;
-  std::string name_;
-  AttrType attr_type_;
-  int attr_offset_;
-  int attr_len_;
-  bool visible_;
-&#125;
-
-class TableMeta&#123;
-  std::string name_;
-  std::vector&lt;FieldMeta&gt; fields_;  &#x2F;&#x2F; 包含sys_fields
-  std::vector&lt;IndexMeta&gt; indexes_;
-  int record_size_ &#x3D; 0;
-  &#x2F;&#x2F;@@@ TODO why used static variable?
-  static std::vector&lt;FieldMeta&gt; sys_fields_;
-&#125;
-class Table&#123;
-  std::string base_dir_;
-  CLogManager *clog_manager_;
-  TableMeta table_meta_;
-  DiskBufferPool *data_buffer_pool_ &#x3D; nullptr;   &#x2F;&#x2F;&#x2F; 数据文件关联的buffer pool
-  RecordFileHandler *record_handler_ &#x3D; nullptr;  &#x2F;&#x2F;&#x2F; 记录操作
-  std::vector&lt;Index *&gt; indexes_;
-&#125;<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
-
-<h3 id="filter-stmt的设计"><a href="#filter-stmt的设计" class="headerlink" title="filter_stmt的设计"></a>filter_stmt的设计</h3><p>分为<code>FilterUnit</code>和<code>FilterStmt</code>，对于形如<code>condition1 and condition2</code>这样的语句，<code>condition1</code>作为一个<code>FilterUnit</code>，而<code>FilterStmt</code>存储的是多个<code>FilterStmt</code>的和</p>
-<p>下面来到<code>FilterUnit</code>的设计，<code>FilterUnit</code>可以拆解为<code>Expression op Expression</code>，因此只需要包含这几个结构</p>
-<pre class="line-numbers language-c++" data-language="c++"><code class="language-c++">class FilterUnit&#123;
-  CompOp comp_ &#x3D; NO_OP;
-  Expression *left_ &#x3D; nullptr;
-  Expression *right_ &#x3D; nullptr;
-&#125;
-class FilterStmt &#123;
-	std::vector&lt;FilterUnit *&gt;  filter_units_;
-&#125;<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
-
-
-<h3 id="expression的设计"><a href="#expression的设计" class="headerlink" title="expression的设计"></a>expression的设计</h3><p><code>TupleCell</code>和<code>Tuple</code>的定义</p>
-<ul>
-<li><code>TupleCell</code>存储了真正的数据，调用<code>tuple</code>的<code>cell_at(index, cell)</code>方法可以用<code>table</code>中的数据填充其值</li>
-<li><code>Tuple</code>是一个抽象类，派生出的对象包括<code>RowTuple</code>和<code>ProjectTuple</code>，它是<code>Operator</code>会返回的值<ul>
-<li><code>RowTuple</code>: 包含了<code>record</code>, <code>table</code>, <code>vector&lt;TupleCellSpec *&gt;</code></li>
-<li><code>ProjectTuple</code>：包含了<code>vector&lt;TupleCellSpec *&gt;</code>, <code>tuple</code></li>
-</ul>
-</li>
-<li><code>TupleCellSpec</code>包含<code>Expression</code></li>
-<li><code>Expression</code>作为抽象类，包括<code>FieldExpr</code>和<code>ValueExpr</code>，<code>FieldExpr</code>包含<code>Field</code>，<code>ValueExpr</code>包含<code>TupleCell</code><ul>
-<li><code>FieldExpr</code>：包含<code>Field</code></li>
-<li><code>ValueExpr</code>：包含<code>TupleCell</code></li>
-</ul>
-</li>
-</ul>
-<pre class="line-numbers language-c++" data-language="c++"><code class="language-c++">class TupleCell&#123;
-  AttrType attr_type_ &#x3D; UNDEFINED;
-  int length_ &#x3D; -1;
-  char *data_ &#x3D; nullptr; &#x2F;&#x2F; real data. no need to move to field_meta.offset
-&#125;
-
-class TupleCellSpec&#123;
-  const char *alias_ &#x3D; nullptr;
-  Expression *expression_ &#x3D; nullptr;
-&#125;<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
-
-<h2 id="Execute-Stage"><a href="#Execute-Stage" class="headerlink" title="Execute Stage"></a>Execute Stage</h2><h3 id="总体流程"><a href="#总体流程" class="headerlink" title="总体流程"></a>总体流程</h3><p>通过<code>stmt-&gt;type</code>转到对应的执行函数，执行函数使用算子进行组装，下面以do_select为例进行讲解</p>
-<pre class="line-numbers language-none"><code class="language-none">1. 首先做existence check
-2. 创建ScanOperator, PredicateOperator, ProjectOperator, ScanOperator作为PredicateOperator的child，PredicateOperator作为ProjectOperator的child，这样一层层的调用next函数，就能获得最下层的结果
-3. 结果存储在ProjectOperator的current_tuple[Tuple]中<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span></span></code></pre>
-<h3 id="Operator的定义"><a href="#Operator的定义" class="headerlink" title="Operator的定义"></a>Operator的定义</h3><p>基类为<code>Operator</code>，主要包含了<code>open</code>, <code>next</code>, <code>close</code>, <code>current_tuple</code>, <code>add_child</code>方法<br>定义如下</p>
-<pre class="line-numbers language-none"><code class="language-none">class Operator
-&#123;
-public:
-  Operator()
-  &#123;&#125;
-
-  virtual ~Operator() &#x3D; default;
-
-  virtual RC open() &#x3D; 0;
-  virtual RC next() &#x3D; 0;
-  virtual RC close() &#x3D; 0;
-
-  virtual Tuple * current_tuple() &#x3D; 0;
-  &#x2F;&#x2F;virtual int tuple_cell_num() const &#x3D; 0;
-  &#x2F;&#x2F;virtual RC  tuple_cell_spec_at(int index, TupleCellSpec *&amp;spec) const &#x3D; 0;
-
-  void add_child(Operator *oper) &#123;
-    children_.push_back(oper);
-  &#125;
-
-protected:
-  std::vector&lt;Operator *&gt; children_;
-&#125;;<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
-
-<p>最关键的函数是<code>next</code>，其主要功能是</p>
-<ul>
-<li>调用<code>child.next</code>让<code>child</code>进行下一步操作</li>
-<li>调用<code>child.current_tuple</code>获取<code>child</code>的现在的元素(<code>tuple</code>)</li>
-<li>调用自己的方法对<code>tuple</code>进行处理，搭配传入的<code>stmt</code>进行运算</li>
-</ul>
-<p>例如，对于<code>PredicateOperator</code>做的事如下：</p>
-<ul>
-<li>一直调用下一层的<code>next</code>方法，对获得的<code>tuple</code>判断是否符合条件</li>
-<li>不符合就一直循环到符合条件返回</li>
-<li>比较时采用<code>do_predicate</code>函数<ul>
-<li>通过<code>filter_stmt_</code>获取左右两边的<code>expression</code>，<code>expression</code>的<code>getValue</code>方法能从<code>Tuple</code>中把值获取到<code>TupleCell</code>中</li>
-<li>调用<code>TupleCell</code>的<code>compare</code>方法</li>
-<li>返回结果</li>
-</ul>
-</li>
-</ul>
-<p>对于<code>TableScanner</code>做的事是</p>
-<ul>
-<li>在<code>open</code>阶段就初始化必要的成员变量</li>
-<li>在<code>next</code>方法中，用<code>RecordScanner</code>的<code>fetch_next_record</code>去获得记录<code>Record</code></li>
-<li>如果在一个页中<ul>
-<li>实际上是采用的<code>RecordPageIterator</code>去取得记录</li>
-<li>通过<code>bitmap_</code>去取得<code>SlotNum</code>，然后用<code>frame_-&gt;data() + page_header_-&gt;first_record_offset + (page_header_-&gt;record_size * slot_num)</code>取得<code>record</code>的值</li>
-</ul>
-</li>
-<li>如果不在一个页面中<ul>
-<li><code>BufferPoolIterator</code>会去通过<code>bitmap</code>取得下一个<code>pageNum</code></li>
-</ul>
-</li>
-<li>返回值是<code>Tuple</code>，里面包含了<code>Record</code></li>
-</ul>
-<pre class="line-numbers language-c++" data-language="c++"><code class="language-c++">class Record
-&#123;
-  RID                            rid_;
-  char *                         data_ &#x3D; nullptr;
-&#125;<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span></span></code></pre>
-
-
-
-
+int main()&#123;
+    cout &lt;&lt; getMaxProfit(&quot;abca&quot;) &lt;&lt; endl;
+    return 0;
+&#125;<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre> ## 阿里 2023 http://101.43.147.120/p/P1082 题目内容 给定一棵二又树，试求这棵二叉树有多少个节点满足以该节点为根的子树是满二叉树?</p>
+<p>我们定义一棵树是满二叉树，当且仅当每一层的节点数量都达到了最大值(即无法在这一层添加新节点)。</p>
+<p>输入描述 第一行输入一个正整数n，代表节点的数量。</p>
+<p>接下来的n行，第i行输入两个整数<span class="math inline">\(l_i\)</span>，代表 � i号节点的左儿子和右儿子。请注意，如果一个节点没有左儿子/右儿子，则对应的 � � l i ​ / � � r i ​ 为- 1 1。 1 ≤ ≤ � n ≤ ≤ 1 0 5 10 5</p>
+<p>输出描述 子树为满二又树的节点数量。</p>
+<p>样例 1 1 输入</p>
+<p>5 2 3 4 5 -1 -1 -1 -1 -1 -1 输出</p>
+<p>4 说明 2 2、 3 3、 4 4、 5 5号节点的子树都是满二叉树</p>
+<h2 id="reference">reference</h2>
+<p>位运算的技巧 https://www.cnblogs.com/RioTian/p/13598747.html</p>
 
                 
             </div>
@@ -638,7 +478,7 @@ protected:
                     </i>
                 </span>
                 <span class="reprint-info">
-                    <a href="http://xjmxyt.github.io/2022/12/25/miniob%E9%A1%B9%E7%9B%AE%E6%80%BB%E7%BB%93/">http://xjmxyt.github.io/2022/12/25/miniob%E9%A1%B9%E7%9B%AE%E6%80%BB%E7%BB%93/</a>
+                    <a href="http://xjmxyt.github.io/2023/03/18/2023%E6%98%A5%E6%8B%9B%E7%AC%94%E8%AF%95%E8%AE%B0%E5%BD%95/">http://xjmxyt.github.io/2023/03/18/2023%E6%98%A5%E6%8B%9B%E7%AC%94%E8%AF%95%E8%AE%B0%E5%BD%95/</a>
                 </span>
             </div>
             <div class="reprint__notice">
@@ -752,9 +592,10 @@ protected:
 <article id="prenext-posts" class="prev-next articles">
     <div class="row article-row">
         
-        <div class="article col s12 m6" data-aos="fade-up">
+        <div class="article col s12 m6" data-aos="fade-up" data-aos="fade-up">
             <div class="article-badge left-badge text-color">
-                <i class="fas fa-chevron-left"></i>&nbsp;上一篇</div>
+                <i class="far fa-dot-circle"></i>&nbsp;本篇
+            </div>
             <div class="card">
                 <a href="/2023/03/18/2023%E6%98%A5%E6%8B%9B%E7%AC%94%E8%AF%95%E8%AE%B0%E5%BD%95/">
                     <div class="card-image">
@@ -772,9 +613,9 @@ protected:
                         
                     </div>
                     <div class="publish-info">
-                        <span class="publish-date">
-                            <i class="far fa-clock fa-fw icon-date"></i>2023-03-18
-                        </span>
+                            <span class="publish-date">
+                                <i class="far fa-clock fa-fw icon-date"></i>2023-03-18
+                            </span>
                         <span class="publish-author">
                             
                             <i class="fas fa-user fa-fw"></i>
@@ -783,6 +624,7 @@ protected:
                         </span>
                     </div>
                 </div>
+
                 
             </div>
         </div>
@@ -793,13 +635,13 @@ protected:
                 下一篇&nbsp;<i class="fas fa-chevron-right"></i>
             </div>
             <div class="card">
-                <a href="/2022/12/20/%E5%B8%B8%E7%94%A8%E5%AE%B9%E5%99%A8%E4%BB%A3%E7%A0%81/">
+                <a href="/2022/12/25/miniob%E9%A1%B9%E7%9B%AE%E6%80%BB%E7%BB%93/">
                     <div class="card-image">
                         
                         
-                        <img src="/medias/featureimages/21.jpg" class="responsive-img" alt="常用容器代码">
+                        <img src="/medias/featureimages/7.jpg" class="responsive-img" alt="miniob项目总结">
                         
-                        <span class="card-title">常用容器代码</span>
+                        <span class="card-title">miniob项目总结</span>
                     </div>
                 </a>
                 <div class="card-content article-content">
@@ -810,7 +652,7 @@ protected:
                     </div>
                     <div class="publish-info">
                             <span class="publish-date">
-                                <i class="far fa-clock fa-fw icon-date"></i>2022-12-20
+                                <i class="far fa-clock fa-fw icon-date"></i>2022-12-25
                             </span>
                         <span class="publish-author">
                             
