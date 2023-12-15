@@ -402,7 +402,8 @@ __global__ void mult(float *a, float b, float *c)&#123;
     c[cstart + 
 &#125;<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre></p>
 <h2 id="parallel-reduction">parallel reduction</h2>
-<p><img src="/images/pasted-7.png" alt="upload successful" /> <pre class="line-numbers language-c++" data-language="c++"><code class="language-c++">__global__ void sum(int* input)&#123;
+<p>Two pass方法</p>
+<p><img src="/images/pasted-7.png" alt="cuda执行过程" /> <pre class="line-numbers language-c++" data-language="c++"><code class="language-c++">__global__ void sum(int* input)&#123;
 	const int tid &#x3D; threadIdx.x;
     int step &#x3D; 1;
     int nthread &#x3D; blockDim.x;
@@ -413,6 +414,7 @@ __global__ void mult(float *a, float b, float *c)&#123;
             nthread &gt;&gt;&#x3D; 1;
             step &lt;&lt;&#x3D; 1;
         &#125;
+        __syncthreads();
     &#125;
 &#125;
 
@@ -426,7 +428,14 @@ int main()&#123;
     int result;
     cudaMemcpy(&amp;result, d, sizeof(int), cudaMemcpyDeviceToHost);
     cudaFree(d);
-&#125;<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre></p>
+&#125;<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre> 缺点分析：都是global memory 潜在的优化方向：用shared memory进行存储，避免warp divergence，sequential addressing，可以参考ref.4.</p>
+<h2 id="reference">reference</h2>
+<ol type="1">
+<li>https://blog.csdn.net/Mrhiuser/article/details/51750907</li>
+<li>https://zhuanlan.zhihu.com/p/416959273</li>
+<li>https://eximia.co/implementing-parallel-reduction-in-cuda/</li>
+<li>https://www.cnblogs.com/biglucky/p/4279699.html</li>
+</ol>
 
                 
             </div>
