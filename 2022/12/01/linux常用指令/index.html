@@ -5,18 +5,16 @@
 <head>
     <meta charset="utf-8">
     <meta name="keywords" content="linux常用指令, xjmxyt的小空间">
-    <meta name="description" content="进程监控ps显示进程信息
-ps -ef | grep 进程号
-kill强制关闭进程
-kill -9 进程号
-
-主机状态监控top查看系统整体资源
-top 
+    <meta name="description" content="进程监控
+ps
+显示进程信息 ps -ef | grep 进程号 ### kill 强制关闭进程 kill -9 进程号
+主机状态监控
+top
+查看系统整体资源 top 
 -p 只显示进程信息
 -d 设置刷新时间
 -n 指定刷新次数
--u 查找特定用户
-以">
+-u ">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
     <meta name="renderer" content="webkit|ie-stand|ie-comp">
@@ -370,48 +368,39 @@ top
 
         <div class="card-content article-card-content">
             <div id="articleContent">
-                <h2 id="进程监控"><a href="#进程监控" class="headerlink" title="进程监控"></a>进程监控</h2><h3 id="ps"><a href="#ps" class="headerlink" title="ps"></a>ps</h3><p>显示进程信息</p>
-<pre class="line-numbers language-bash" data-language="bash"><code class="language-bash"><span class="token function">ps</span> <span class="token parameter variable">-ef</span> <span class="token operator">|</span> <span class="token function">grep</span> 进程号<span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>
-<h3 id="kill"><a href="#kill" class="headerlink" title="kill"></a>kill</h3><p>强制关闭进程</p>
-<pre class="line-numbers language-bash" data-language="bash"><code class="language-bash"><span class="token function">kill</span> <span class="token parameter variable">-9</span> 进程号<span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>
-
-<h2 id="主机状态监控"><a href="#主机状态监控" class="headerlink" title="主机状态监控"></a>主机状态监控</h2><h3 id="top"><a href="#top" class="headerlink" title="top"></a>top</h3><p>查看系统整体资源</p>
-<pre class="line-numbers language-bash" data-language="bash"><code class="language-bash"><span class="token function">top</span> 
+                <h2 id="进程监控">进程监控</h2>
+<h3 id="ps">ps</h3>
+<p>显示进程信息 <pre class="line-numbers language-bash" data-language="bash"><code class="language-bash"><span class="token function">ps</span> <span class="token parameter variable">-ef</span> <span class="token operator">|</span> <span class="token function">grep</span> 进程号<span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre> ### kill 强制关闭进程 <pre class="line-numbers language-bash" data-language="bash"><code class="language-bash"><span class="token function">kill</span> <span class="token parameter variable">-9</span> 进程号<span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre></p>
+<h2 id="主机状态监控">主机状态监控</h2>
+<h3 id="top">top</h3>
+<p>查看系统整体资源 <pre class="line-numbers language-bash" data-language="bash"><code class="language-bash"><span class="token function">top</span> 
 <span class="token parameter variable">-p</span> 只显示进程信息
 <span class="token parameter variable">-d</span> 设置刷新时间
 <span class="token parameter variable">-n</span> 指定刷新次数
-<span class="token parameter variable">-u</span> 查找特定用户<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span></span></code></pre>
-<p>以交互式进行，可以通过按键有各种功能</p>
-<h3 id="netstat"><a href="#netstat" class="headerlink" title="netstat"></a>netstat</h3><p>查看端口占用</p>
-<pre class="line-numbers language-bash" data-language="bash"><code class="language-bash"><span class="token function">netstat</span> <span class="token parameter variable">-an</span> <span class="token operator">|</span> <span class="token function">grep</span> 端口号<span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>
-<p>公认端口：1～1023，系统内置或常用知名软件绑定使用<br>注册端口：1024～49151:松散绑定（用户自定义）<br>动态端口：49152～65532:临时使用（多用于出口）</p>
-<h3 id="df"><a href="#df" class="headerlink" title="df"></a>df</h3><p>查看磁盘使用情况</p>
-<pre class="line-numbers language-bash" data-language="bash"><code class="language-bash"><span class="token function">df</span> <span class="token parameter variable">-h</span><span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>
-
-<h3 id="iostat"><a href="#iostat" class="headerlink" title="iostat"></a>iostat</h3><p>查看CPU、磁盘相关情况</p>
-<pre class="line-numbers language-bash" data-language="bash"><code class="language-bash">iostat <span class="token parameter variable">-x</span><span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>
-<p>主要去关注三个指标</p>
-<p>rKB&#x2F;S: 每秒发送到设备的读取请求数</p>
-<p>wKB&#x2F;S: 每秒发送到设备的写入请求数</p>
+<span class="token parameter variable">-u</span> 查找特定用户<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span></span></code></pre> 以交互式进行，可以通过按键有各种功能</p>
+<h3 id="netstat">netstat</h3>
+<p>查看端口占用 <pre class="line-numbers language-bash" data-language="bash"><code class="language-bash"><span class="token function">netstat</span> <span class="token parameter variable">-an</span> <span class="token operator">|</span> <span class="token function">grep</span> 端口号<span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre> 公认端口：1～1023，系统内置或常用知名软件绑定使用 注册端口：1024～49151:松散绑定（用户自定义） 动态端口：49152～65532:临时使用（多用于出口）</p>
+<h3 id="df">df</h3>
+<p>查看磁盘使用情况 <pre class="line-numbers language-bash" data-language="bash"><code class="language-bash"><span class="token function">df</span> <span class="token parameter variable">-h</span><span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre></p>
+<h3 id="iostat">iostat</h3>
+<p>查看CPU、磁盘相关情况 <pre class="line-numbers language-bash" data-language="bash"><code class="language-bash">iostat <span class="token parameter variable">-x</span><span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre> 主要去关注三个指标</p>
+<p>rKB/S: 每秒发送到设备的读取请求数</p>
+<p>wKB/S: 每秒发送到设备的写入请求数</p>
 <p>%util：磁盘利用率</p>
-<h3 id="sar"><a href="#sar" class="headerlink" title="sar"></a>sar</h3><p>网络状态监控</p>
-<pre class="line-numbers language-bash" data-language="bash"><code class="language-bash">sar <span class="token parameter variable">-n</span> DEV<span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>
-<h2 id="环境变量"><a href="#环境变量" class="headerlink" title="环境变量"></a>环境变量</h2><h3 id="查看环境变量"><a href="#查看环境变量" class="headerlink" title="查看环境变量"></a>查看环境变量</h3><p>采用<code>env</code>查看，是<code>KEY-VALUE</code>的形式，可以通过<code>$</code>获得环境变量的值</p>
-<pre class="line-numbers language-bash" data-language="bash"><code class="language-bash"><span class="token function">env</span> <span class="token operator">|</span> <span class="token function">grep</span> <span class="token environment constant">PATH</span>
+<h3 id="sar">sar</h3>
+<p>网络状态监控 <pre class="line-numbers language-bash" data-language="bash"><code class="language-bash">sar <span class="token parameter variable">-n</span> DEV<span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre> ## 环境变量 ### 查看环境变量 采用<code>env</code>查看，是<code>KEY-VALUE</code>的形式，可以通过<code>$</code>获得环境变量的值 <pre class="line-numbers language-bash" data-language="bash"><code class="language-bash"><span class="token function">env</span> <span class="token operator">|</span> <span class="token function">grep</span> <span class="token environment constant">PATH</span>
 <span class="token builtin class-name">echo</span> <span class="token environment constant">$PATH</span>
-得到的就是执行程序的搜索路径<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span></span></code></pre>
-<h3 id="设置环境变量"><a href="#设置环境变量" class="headerlink" title="设置环境变量"></a>设置环境变量</h3><h4 id="临时生效"><a href="#临时生效" class="headerlink" title="临时生效"></a>临时生效</h4><pre class="line-numbers language-bash" data-language="bash"><code class="language-bash"><span class="token builtin class-name">export</span> <span class="token assign-left variable">VAR</span><span class="token operator">=</span>xxx<span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>
-<h4 id="永久生效"><a href="#永久生效" class="headerlink" title="永久生效"></a>永久生效</h4><ul>
-<li>对当前用户生效<br>  通过用户<code>home</code>目录下的<code>.bashrc</code>中<code>export</code></li>
-<li>对全局有效<br>  通过<code>vim /etc/profile</code></li>
-</ul>
-<h2 id="压缩和解压"><a href="#压缩和解压" class="headerlink" title="压缩和解压"></a>压缩和解压</h2><p>常用2种压缩格式</p>
+得到的就是执行程序的搜索路径<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span></span></code></pre> ### 设置环境变量</p>
+<h4 id="临时生效">临时生效</h4>
+<pre class="line-numbers language-bash" data-language="bash"><code class="language-bash"><span class="token builtin class-name">export</span> <span class="token assign-left variable">VAR</span><span class="token operator">=</span>xxx<span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>
+<h4 id="永久生效">永久生效</h4>
 <ul>
-<li><code>.tar</code>：简单封装</li>
-<li><code>.gz</code>：极大减小压缩后的体积</li>
+<li>对当前用户生效 通过用户<code>home</code>目录下的<code>.bashrc</code>中<code>export</code></li>
+<li>对全局有效 通过<code>vim /etc/profile</code></li>
 </ul>
-<p>针对这两种格式，使用<code>tar</code>命令都可以进行压缩和解压缩的操作</p>
-<pre class="line-numbers language-bash" data-language="bash"><code class="language-bash">压缩文件<span class="token punctuation">(</span>f一定要最后<span class="token punctuation">)</span>
+<h2 id="压缩和解压">压缩和解压</h2>
+<p>常用2种压缩格式 - <code>.tar</code>：简单封装 - <code>.gz</code>：极大减小压缩后的体积</p>
+<p>针对这两种格式，使用<code>tar</code>命令都可以进行压缩和解压缩的操作 <pre class="line-numbers language-bash" data-language="bash"><code class="language-bash">压缩文件<span class="token punctuation">(</span>f一定要最后<span class="token punctuation">)</span>
 <span class="token function">tar</span> <span class="token parameter variable">-cvf</span> test.tar <span class="token number">1</span>.txt <span class="token number">2</span>.txt <span class="token number">3</span>.txt <span class="token punctuation">(</span>会形成.tar<span class="token punctuation">)</span>
 <span class="token function">tar</span> <span class="token parameter variable">-zcvf</span> test.tar <span class="token number">1</span>.txt <span class="token number">2</span>.txt <span class="token number">3</span>.txt<span class="token punctuation">(</span>会形成.gz<span class="token punctuation">)</span>
 
@@ -419,17 +408,13 @@ top
 <span class="token function">tar</span> <span class="token parameter variable">-xvf</span> test.tar <span class="token punctuation">(</span>到当前目录<span class="token punctuation">)</span>
 <span class="token function">tar</span> <span class="token parameter variable">-xvf</span> test.tar <span class="token parameter variable">-C</span> /home <span class="token punctuation">(</span>-C 指定目的地<span class="token punctuation">)</span>
 <span class="token function">tar</span> <span class="token parameter variable">-zxvf</span> test.gz
-<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
-<p><code>zip</code>的使用</p>
-<pre class="line-numbers language-bash" data-language="bash"><code class="language-bash">压缩文件
+<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre> <code>zip</code>的使用 <pre class="line-numbers language-bash" data-language="bash"><code class="language-bash">压缩文件
 <span class="token function">zip</span> test.zip a.txt b.txt
 <span class="token function">zip</span> <span class="token parameter variable">-r</span> test.zip <span class="token builtin class-name">test</span> a.txt b.txt<span class="token punctuation">(</span>带有文件夹时<span class="token punctuation">)</span>
 
 解压文件
 <span class="token function">unzip</span> test.zip <span class="token parameter variable">-d</span> 位置
-<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
-
-
+<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre></p>
 
                 
             </div>

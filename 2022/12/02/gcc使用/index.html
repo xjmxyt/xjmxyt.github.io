@@ -5,10 +5,12 @@
 <head>
     <meta charset="utf-8">
     <meta name="keywords" content="gcc使用, xjmxyt的小空间">
-    <meta name="description" content="gcc编译编译的四个步骤
+    <meta name="description" content="gcc编译
+编译的四个步骤
+
 预处理(gcc -E)：展开宏、头文件，替换条件编译、删除注释、空行、空白(hello.i)
 编译(gcc -S)：检查语法规范，得到汇编码(hello.s)
-汇编(gcc -c)：将汇编指令翻译成机器码(hell">
+汇编(gcc -c)：将汇编指令翻译成机器码(he">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
     <meta name="renderer" content="webkit|ie-stand|ie-comp">
@@ -362,37 +364,33 @@
 
         <div class="card-content article-card-content">
             <div id="articleContent">
-                <h2 id="gcc编译"><a href="#gcc编译" class="headerlink" title="gcc编译"></a>gcc编译</h2><h3 id="编译的四个步骤"><a href="#编译的四个步骤" class="headerlink" title="编译的四个步骤"></a>编译的四个步骤</h3><ul>
+                <h2 id="gcc编译">gcc编译</h2>
+<h3 id="编译的四个步骤">编译的四个步骤</h3>
+<ul>
 <li>预处理(<code>gcc -E</code>)：展开宏、头文件，替换条件编译、删除注释、空行、空白(<code>hello.i</code>)</li>
 <li>编译(<code>gcc -S</code>)：检查语法规范，得到汇编码(<code>hello.s</code>)</li>
 <li>汇编(<code>gcc -c</code>)：将汇编指令翻译成机器码(<code>hello.o</code>)</li>
 <li>链接：<strong>数据段合并，数据地址回填</strong>（<code>a.out</code>）</li>
 </ul>
 <p>消耗时间和系统资源最多的是<strong>编译阶段</strong></p>
-<h3 id="常用参数"><a href="#常用参数" class="headerlink" title="常用参数"></a>常用参数</h3><pre class="line-numbers language-bash" data-language="bash"><code class="language-bash">-I: 指定头文件所在目录位置
+<h3 id="常用参数">常用参数</h3>
+<pre class="line-numbers language-bash" data-language="bash"><code class="language-bash">-I: 指定头文件所在目录位置
 -c：只做预处理 编译 汇编操作
 -g：编译时添加调试文件
 -On: <span class="token assign-left variable">n</span><span class="token operator">=</span><span class="token number">0</span>~3, 优化程度
 -Wall: 显示所有的警告信息
 -D: 向程序中注册宏<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
-<h3 id="动态库和静态库"><a href="#动态库和静态库" class="headerlink" title="动态库和静态库"></a>动态库和静态库</h3><p>使用场景</p>
-<ul>
-<li>动态库：对时间要求较低，对空间要求较高</li>
-<li>静态库：对空间要求较低，对时间要求较高</li>
-</ul>
-<h4 id="制作静态库"><a href="#制作静态库" class="headerlink" title="制作静态库"></a>制作静态库</h4><pre class="line-numbers language-bash" data-language="bash"><code class="language-bash">先用gcc -c生成.o文件，再用ar生成库名
+<h3 id="动态库和静态库">动态库和静态库</h3>
+<p>使用场景 - 动态库：对时间要求较低，对空间要求较高 - 静态库：对空间要求较低，对时间要求较高</p>
+<h4 id="制作静态库">制作静态库</h4>
+<pre class="line-numbers language-bash" data-language="bash"><code class="language-bash">先用gcc -c生成.o文件，再用ar生成库名
 ar rcs mylib.a add.o sub.o<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span></span></code></pre>
-
-<h4 id="制作动态库"><a href="#制作动态库" class="headerlink" title="制作动态库"></a>制作动态库</h4><p>需要生成与位置无关的代码，在绑定动态库时会延迟绑定，通过汇编中@plt中进行判断</p>
-<pre class="line-numbers language-bash" data-language="bash"><code class="language-bash">gcc add.c <span class="token parameter variable">-o</span> add.o -fPIC<span class="token punctuation">(</span>生成位置无关代码<span class="token punctuation">)</span>
-gcc <span class="token parameter variable">-shared</span> lib库名.so add.o sub.o<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span></span></code></pre>
-<p>编译可执行文件时，用<code>-l</code>指定库名，<code>-L</code>指定路径</p>
-<pre class="line-numbers language-bash" data-language="bash"><code class="language-bash">gcc test.c <span class="token parameter variable">-o</span> a.out <span class="token parameter variable">-lmymath</span> -L./lib -I./include<span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>
-<p>链接器：工作在链接阶段，工作时需要<code>-l</code>和<code>-L</code></p>
+<h4 id="制作动态库">制作动态库</h4>
+<p>需要生成与位置无关的代码，在绑定动态库时会延迟绑定，通过汇编中@plt中进行判断 <pre class="line-numbers language-bash" data-language="bash"><code class="language-bash">gcc add.c <span class="token parameter variable">-o</span> add.o -fPIC<span class="token punctuation">(</span>生成位置无关代码<span class="token punctuation">)</span>
+gcc <span class="token parameter variable">-shared</span> lib库名.so add.o sub.o<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span></span></code></pre> 编译可执行文件时，用<code>-l</code>指定库名，<code>-L</code>指定路径 <pre class="line-numbers language-bash" data-language="bash"><code class="language-bash">gcc test.c <span class="token parameter variable">-o</span> a.out <span class="token parameter variable">-lmymath</span> -L./lib -I./include<span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre> 链接器：工作在链接阶段，工作时需要<code>-l</code>和<code>-L</code></p>
 <p>动态链接器：工作在运行阶段</p>
 <p>由于动态库时运行时加载的，程序需要找到动态库的位置，需要设置环境变量，<code>export LD_LIBRARY_PATH=动态库路径</code></p>
-<p>查看程序执行时要加载哪些动态库以及动态库路径</p>
-<pre class="line-numbers language-bash" data-language="bash"><code class="language-bash">ldd a.out<span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>
+<p>查看程序执行时要加载哪些动态库以及动态库路径 <pre class="line-numbers language-bash" data-language="bash"><code class="language-bash">ldd a.out<span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre></p>
 
                 
             </div>

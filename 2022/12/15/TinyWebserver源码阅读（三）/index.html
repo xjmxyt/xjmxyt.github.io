@@ -5,8 +5,7 @@
 <head>
     <meta charset="utf-8">
     <meta name="keywords" content="TinyWebserver源码阅读（三）, xjmxyt的小空间">
-    <meta name="description" content="在第三部分，主要对日志系统log和定时器timer进行分析
-1 日志loglog部分由三部分组成，blockqueue.h, log.h, log.cpp，blockqueue是封装的类似deque的能进行并发访问和操作的底层结构，log.">
+    <meta name="description" content="在第三部分，主要对日志系统log和定时器timer进行分析 ## 1 日志log log部分由三部分组成，blockqueue.h, log.h, log.cpp，blockqueue是封装的类似deque的能进行并发访问和操作的底层结构，">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
     <meta name="renderer" content="webkit|ie-stand|ie-comp">
@@ -369,22 +368,15 @@
 
         <div class="card-content article-card-content">
             <div id="articleContent">
-                <p>在第三部分，主要对日志系统<code>log</code>和定时器<code>timer</code>进行分析</p>
-<h2 id="1-日志log"><a href="#1-日志log" class="headerlink" title="1 日志log"></a>1 日志<code>log</code></h2><p><code>log</code>部分由三部分组成，<code>blockqueue.h</code>, <code>log.h</code>, <code>log.cpp</code>，<code>blockqueue</code>是封装的类似<code>deque</code>的能进行并发访问和操作的底层结构，<code>log.cpp</code>实现了日志的功能</p>
-<h3 id="1-1-blockqueue的实现"><a href="#1-1-blockqueue的实现" class="headerlink" title="1.1 blockqueue的实现"></a>1.1 <code>blockqueue</code>的实现</h3><h4 id="1-1-1-成员变量和方法分析"><a href="#1-1-1-成员变量和方法分析" class="headerlink" title="1.1.1 成员变量和方法分析"></a>1.1.1 成员变量和方法分析</h4><p><code>blockqueue</code>和<code>deque</code>的功能是类似的，主要是在<code>deque</code>上加了一层并发访问的控制，其调用接口包括了<code>empty()</code>, <code>full()</code>, <code>Close()</code>, <code>size()</code>, <code>capacity()</code>, <code>front()</code>, <code>back()</code>, <code>push_back(const T &amp;item)</code>, <code>push_front(const T &amp;item)</code>, 稍有区别的为</p>
-<ul>
-<li><code>bool pop(T &amp;item)</code>: 如果<code>isClose_</code>为<code>true</code>返回<code>false</code>，否则返回<code>true</code>，首个元素会被放在<code>item</code>中</li>
-<li><code>bool pop(T &amp;item, int timeout)</code>: 如果<code>isClose_</code>为<code>true</code>或者在<code>timeout</code>时间内没有返回，返回<code>false</code></li>
-</ul>
-<p>对成员变量进行分析，包括</p>
-<pre class="line-numbers language-c++" data-language="c++"><code class="language-c++">std::deque&lt;T&gt; deq_; &#x2F;&#x2F; deque双端队列
+                <p>在第三部分，主要对日志系统<code>log</code>和定时器<code>timer</code>进行分析 ## 1 日志<code>log</code> <code>log</code>部分由三部分组成，<code>blockqueue.h</code>, <code>log.h</code>, <code>log.cpp</code>，<code>blockqueue</code>是封装的类似<code>deque</code>的能进行并发访问和操作的底层结构，<code>log.cpp</code>实现了日志的功能 ### 1.1 <code>blockqueue</code>的实现 #### 1.1.1 成员变量和方法分析 <code>blockqueue</code>和<code>deque</code>的功能是类似的，主要是在<code>deque</code>上加了一层并发访问的控制，其调用接口包括了<code>empty()</code>, <code>full()</code>, <code>Close()</code>, <code>size()</code>, <code>capacity()</code>, <code>front()</code>, <code>back()</code>, <code>push_back(const T &amp;item)</code>, <code>push_front(const T &amp;item)</code>, 稍有区别的为 - <code>bool pop(T &amp;item)</code>: 如果<code>isClose_</code>为<code>true</code>返回<code>false</code>，否则返回<code>true</code>，首个元素会被放在<code>item</code>中 - <code>bool pop(T &amp;item, int timeout)</code>: 如果<code>isClose_</code>为<code>true</code>或者在<code>timeout</code>时间内没有返回，返回<code>false</code></p>
+<p>对成员变量进行分析，包括 <pre class="line-numbers language-c++" data-language="c++"><code class="language-c++">std::deque&lt;T&gt; deq_; &#x2F;&#x2F; deque双端队列
 size_t capacity_; &#x2F;&#x2F; 容量
 std::mutex mtx_; &#x2F;&#x2F;锁mutex
 bool isClose_; &#x2F;&#x2F;是否关闭
 std::condition_variable condConsumer_; &#x2F;&#x2F; 生产者信号量
-std::condition_variable condProducer_; &#x2F;&#x2F; 消费者信号量<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
-<p>   从成员变量中，可以猜测出使用的是生产者消费者模型，生成者向<code>deq_</code>中添加元素，消费者从<code>deq_</code>中取出元素</p>
-<h4 id="1-1-2-元素的访问"><a href="#1-1-2-元素的访问" class="headerlink" title="1.1.2 元素的访问"></a>1.1.2 元素的访问</h4><p>元素的访问不涉及到对<code>deq_</code>的操作，因为在访问之前只用获取<code>mtx_</code>的锁然后去访问元素就行，下面给出<code>back</code>和<code>empty</code>的例子</p>
+std::condition_variable condProducer_; &#x2F;&#x2F; 消费者信号量<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre> 从成员变量中，可以猜测出使用的是生产者消费者模型，生成者向<code>deq_</code>中添加元素，消费者从<code>deq_</code>中取出元素</p>
+<h4 id="元素的访问">1.1.2 元素的访问</h4>
+<p>元素的访问不涉及到对<code>deq_</code>的操作，因为在访问之前只用获取<code>mtx_</code>的锁然后去访问元素就行，下面给出<code>back</code>和<code>empty</code>的例子</p>
 <pre class="line-numbers language-c++" data-language="c++"><code class="language-c++">template&lt;class T&gt;
 T BlockQueue&lt;T&gt;::back()&#123;
 	std::lock_guard&lt;std::mutex&gt; locker(mtx_):
@@ -396,8 +388,8 @@ bool BlockQueue&lt;T&gt;::empty()&#123;
 	return deq_.empty();
 &#125;<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
 <p>这里<code>lock_guard</code>在初始化的时候，可以自动获取锁</p>
-<h4 id="1-1-4-元素的操作"><a href="#1-1-4-元素的操作" class="headerlink" title="1.1.4 元素的操作"></a>1.1.4 元素的操作</h4><p>在涉及对元素的操作时，情况就稍稍复杂一点点，这时候不仅要考虑并发读，也要考虑并发写，还需要考虑<code>deq_</code>为空的情况。这里主要用两个操作进行举例，<code>push_back</code>和<code>pop</code></p>
-<pre class="line-numbers language-c++" data-language="c++"><code class="language-c++">template&lt;class T&gt;
+<h4 id="元素的操作">1.1.4 元素的操作</h4>
+<p>在涉及对元素的操作时，情况就稍稍复杂一点点，这时候不仅要考虑并发读，也要考虑并发写，还需要考虑<code>deq_</code>为空的情况。这里主要用两个操作进行举例，<code>push_back</code>和<code>pop</code> <pre class="line-numbers language-c++" data-language="c++"><code class="language-c++">template&lt;class T&gt;
 void BlockQueue::push_back(const T &amp;item)&#123;
 	std::lock_guard&lt;std::mutex&gt; locker(mtx_);
 	&#123;
@@ -417,9 +409,9 @@ bool BlockQueue::pop(T &amp;item)&#123;
 			return false;
 		&#125;
 	&#125;
-&#125;<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
-
-<h4 id="1-1-5-初始化和关闭"><a href="#1-1-5-初始化和关闭" class="headerlink" title="1.1.5 初始化和关闭"></a>1.1.5 初始化和关闭</h4><pre class="line-numbers language-c++" data-language="c++"><code class="language-c++">template&lt;class T&gt;
+&#125;<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre></p>
+<h4 id="初始化和关闭">1.1.5 初始化和关闭</h4>
+<pre class="line-numbers language-c++" data-language="c++"><code class="language-c++">template&lt;class T&gt;
 BlockDeque&lt;T&gt;::BlockDeque(size_t MaxCapacity) :capacity_(MaxCapacity) &#123;
     assert(MaxCapacity &gt; 0);
     isClose_ &#x3D; false;
@@ -435,14 +427,12 @@ void BlockDeque&lt;T&gt;::Close() &#123;
     condConsumer_.notify_all();
 &#125;;<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
 <p>初始化的时候主要是去初始化了<code>capability_</code>，并设置<code>isClose_</code>为<code>false</code>，在关闭时把<code>isClose_</code>设置为<code>true</code>，并用信号量<code>condProducer_</code>和<code>condCustomer_</code>通知阻塞的线程。注意<code>isClose_</code>变量是为了告诉其他线程，它需要结束了，这样在<code>pop</code>的时候会返回<code>false</code></p>
-<h2 id="1-2-log的实现"><a href="#1-2-log的实现" class="headerlink" title="1.2 log的实现"></a>1.2 <code>log</code>的实现</h2><p><code>log</code>采用的也是单例模式</p>
-<pre class="line-numbers language-c++" data-language="c++"><code class="language-c++">static Log* instance();
+<h2 id="log的实现">1.2 <code>log</code>的实现</h2>
+<p><code>log</code>采用的也是单例模式 <pre class="line-numbers language-c++" data-language="c++"><code class="language-c++">static Log* instance();
 Log* Log::instance()&#123;
 	static Log log;
 	return &amp;log;
-&#125;<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span></span></code></pre>
-<p><code>log</code>的成员变量包括</p>
-<pre class="line-numbers language-c++" data-language="c++"><code class="language-c++">const char* path_; &#x2F;&#x2F; 路径
+&#125;<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span></span></code></pre> <code>log</code>的成员变量包括 <pre class="line-numbers language-c++" data-language="c++"><code class="language-c++">const char* path_; &#x2F;&#x2F; 路径
 const char* suffix_; &#x2F;&#x2F; 后缀
 
 int MAX_LINES_; &#x2F;&#x2F; 最大行数
@@ -459,14 +449,7 @@ bool isAsync_; &#x2F;&#x2F; 是否异步
 FILE* fp_; &#x2F;&#x2F; 文件指针
 std::unique_ptr&lt;BlockDeque&lt;std::string&gt;&gt; deque_; &#x2F;&#x2F; blockQueue队列
 std::unique_ptr&lt;std::thread&gt; writeThread_; &#x2F;&#x2F; 写日志的线程
-std::mutex mtx_; &#x2F;&#x2F; 锁<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
-<h3 id="1-2-1-init方法"><a href="#1-2-1-init方法" class="headerlink" title="1.2.1 init方法"></a>1.2.1 <code>init</code>方法</h3><p>在<code>init</code>方法中，会初始化日志级别<code>level</code>，路径<code>path</code>，后缀<code>suffix</code>，缓冲区的最大长度<code>maxQueueSize</code>，它做了以下事情</p>
-<ul>
-<li>初始化<code>deque_</code>和<code>writeThread_</code><ul>
-<li>新的<code>thread</code>采用<code>new thread(FlushLogThread)</code>,<code>FlushLogThread</code>是一个静态方法，它获得<code>Log::instance</code>并调用其<code>AsyncWrite_</code>将<code>deque_</code>的内容写出。</li>
-</ul>
-</li>
-<li>创建<code>log</code>文件，在此前检查<code>fp_</code>有没有被打开，如果被打开先把内容写回。该操作涉及到临界区资源，因此需要申请锁<pre class="line-numbers language-c++" data-language="c++"><code class="language-c++">void Log::init(int level &#x3D; 1, const char* path, const char* suffix, int maxQueueSize) &#123;
+std::mutex mtx_; &#x2F;&#x2F; 锁<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre> ### 1.2.1 <code>init</code>方法 在<code>init</code>方法中，会初始化日志级别<code>level</code>，路径<code>path</code>，后缀<code>suffix</code>，缓冲区的最大长度<code>maxQueueSize</code>，它做了以下事情 - 初始化<code>deque_</code>和<code>writeThread_</code> - 新的<code>thread</code>采用<code>new thread(FlushLogThread)</code>,<code>FlushLogThread</code>是一个静态方法，它获得<code>Log::instance</code>并调用其<code>AsyncWrite_</code>将<code>deque_</code>的内容写出。 - 创建<code>log</code>文件，在此前检查<code>fp_</code>有没有被打开，如果被打开先把内容写回。该操作涉及到临界区资源，因此需要申请锁 <pre class="line-numbers language-c++" data-language="c++"><code class="language-c++">void Log::init(int level &#x3D; 1, const char* path, const char* suffix, int maxQueueSize) &#123;
     isOpen_ &#x3D; true;
     level_ &#x3D; level;
     if(maxQueueSize &gt; 0) &#123;
@@ -504,35 +487,24 @@ std::mutex mtx_; &#x2F;&#x2F; 锁<span aria-hidden="true" class="line-numbers-ro
         &#125; 
         assert(fp_ !&#x3D; nullptr);
     &#125;
-&#125;<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre></li>
-</ul>
-<h3 id="1-2-2-LOG-BASE方法"><a href="#1-2-2-LOG-BASE方法" class="headerlink" title="1.2.2 LOG_BASE方法"></a>1.2.2 <code>LOG_BASE</code>方法</h3><p>在实际使用中，我们采用的是<code>LOG_INFO</code>, <code>LOG_WARN</code>等方法，其定义如下：</p>
-<pre class="line-numbers language-c++" data-language="c++"><code class="language-c++">#define LOG_DEBUG(format, ...) do &#123;LOG_BASE(0, format, ##__VA_ARGS__)&#125; while(0);
+&#125;<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre></p>
+<h3 id="log_base方法">1.2.2 <code>LOG_BASE</code>方法</h3>
+<p>在实际使用中，我们采用的是<code>LOG_INFO</code>, <code>LOG_WARN</code>等方法，其定义如下： <pre class="line-numbers language-c++" data-language="c++"><code class="language-c++">#define LOG_DEBUG(format, ...) do &#123;LOG_BASE(0, format, ##__VA_ARGS__)&#125; while(0);
 #define LOG_INFO(format, ...) do &#123;LOG_BASE(1, format, ##__VA_ARGS__)&#125; while(0);
 #define LOG_WARN(format, ...) do &#123;LOG_BASE(2, format, ##__VA_ARGS__)&#125; while(0);
-#define LOG_ERROR(format, ...) do &#123;LOG_BASE(3, format, ##__VA_ARGS__)&#125; while(0);<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span></span></code></pre>
-<p>它们底层都利用的是<code>LOG_BASE</code>方法，只是设置了不同的日志级别<code>level</code>，那<code>LOG_BASE</code>又做了什么事呢？下面针对代码进行分析</p>
-<pre class="line-numbers language-c++" data-language="c++"><code class="language-c++">#define LOG_BASE(level, format, ...) \
+#define LOG_ERROR(format, ...) do &#123;LOG_BASE(3, format, ##__VA_ARGS__)&#125; while(0);<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span></span></code></pre> 它们底层都利用的是<code>LOG_BASE</code>方法，只是设置了不同的日志级别<code>level</code>，那<code>LOG_BASE</code>又做了什么事呢？下面针对代码进行分析 <pre class="line-numbers language-c++" data-language="c++"><code class="language-c++">#define LOG_BASE(level, format, ...) \
     do &#123;\
         Log* log &#x3D; Log::Instance();\
         if (log-&gt;IsOpen() &amp;&amp; log-&gt;GetLevel() &lt;&#x3D; level) &#123;\
             log-&gt;write(level, format, ##__VA_ARGS__); \
             log-&gt;flush();\
         &#125;\
-    &#125; while(0);<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
-<p>这里涉及到一个使用<a target="_blank" rel="noopener" href="https://www.jianshu.com/p/4ac2195ea9b6">do_while(0)</a>，该操作是为了在<code>define</code>宏中封装较为复杂的代码。</p>
-<ul>
-<li>首先调用<code>Log::instance()</code>获取<code>log</code></li>
-<li>如果<code>log</code>打开并且日志等级小于<code>level</code>，表示需要写入日志，调用<code>log-&gt;write</code>和<code>log-&gt;flush</code></li>
-</ul>
-<h3 id="1-2-3-write方法"><a href="#1-2-3-write方法" class="headerlink" title="1.2.3 write方法"></a>1.2.3 <code>write</code>方法</h3><p><code>write</code>做的事情如下：</p>
-<ul>
-<li>判断打开的日志是否写满 or 日期是否和现在日期相等，如果写满了或者日期不相等，把已有内容用<code>flush</code>写回，创建一个新的<code>fp_</code>（在此期间因为涉及到对<code>buff_</code>和<code>fp_</code>的操作，需要<code>locker</code>）</li>
-<li>向<code>buffer_</code>中写入日期，写入<code>log level title</code>，写入传入的参数</li>
-<li>如果是异步操作，把<code>buffer</code>中的内容放到<code>deque_	</code>中，否则直接<code>fputs</code>，调用<code>buff_.retrieveAll()</code>表示所有的内容都已写，改变其<code>readPos_</code></li>
-<li><code>flush</code>操作，会调用<code>deque_-&gt;flush()</code>去<code>notify_one</code>一个线程，并且会用<code>fflush(fp_)</code>去将缓冲区的内容写回。</li>
-</ul>
-<h2 id="2-timer分析"><a href="#2-timer分析" class="headerlink" title="2 timer分析"></a>2 <code>timer</code>分析</h2><h3 id="2-1-timerNode分析"><a href="#2-1-timerNode分析" class="headerlink" title="2.1 timerNode分析"></a>2.1 <code>timerNode</code>分析</h3><pre class="line-numbers language-c++" data-language="c++"><code class="language-c++">typedef std::function&lt;void()&gt; TimeoutCallBack;
+    &#125; while(0);<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre> 这里涉及到一个使用<a target="_blank" rel="noopener" href="https://www.jianshu.com/p/4ac2195ea9b6">do_while(0)</a>，该操作是为了在<code>define</code>宏中封装较为复杂的代码。 - 首先调用<code>Log::instance()</code>获取<code>log</code> - 如果<code>log</code>打开并且日志等级小于<code>level</code>，表示需要写入日志，调用<code>log-&gt;write</code>和<code>log-&gt;flush</code></p>
+<h3 id="write方法">1.2.3 <code>write</code>方法</h3>
+<p><code>write</code>做的事情如下： - 判断打开的日志是否写满 or 日期是否和现在日期相等，如果写满了或者日期不相等，把已有内容用<code>flush</code>写回，创建一个新的<code>fp_</code>（在此期间因为涉及到对<code>buff_</code>和<code>fp_</code>的操作，需要<code>locker</code>） - 向<code>buffer_</code>中写入日期，写入<code>log level title</code>，写入传入的参数 - 如果是异步操作，把<code>buffer</code>中的内容放到<code>deque_</code>中，否则直接<code>fputs</code>，调用<code>buff_.retrieveAll()</code>表示所有的内容都已写，改变其<code>readPos_</code> - <code>flush</code>操作，会调用<code>deque_-&gt;flush()</code>去<code>notify_one</code>一个线程，并且会用<code>fflush(fp_)</code>去将缓冲区的内容写回。</p>
+<h2 id="timer分析">2 <code>timer</code>分析</h2>
+<h3 id="timernode分析">2.1 <code>timerNode</code>分析</h3>
+<pre class="line-numbers language-c++" data-language="c++"><code class="language-c++">typedef std::function&lt;void()&gt; TimeoutCallBack;
 typedef std::chrono::high_resolution_clock Clock;
 typedef std::chrono::milliseconds MS;
 typedef Clock::time_point TimeStamp;
@@ -546,20 +518,14 @@ struct TimerNode &#123;
     &#125;
 &#125;;<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
 <p><code>TimerNode</code>有三个属性，<code>id</code>，<code>expire</code>到期时间，<code>timeoutCallBack</code>在时间到期后的回调函数，其重载了<code>operator &lt;</code>按照<code>expire</code>进行比较</p>
-<h3 id="2-2-HeapTimer"><a href="#2-2-HeapTimer" class="headerlink" title="2.2 HeapTimer"></a>2.2 <code>HeapTimer</code></h3><p><code>heapTimer</code>自定义<br>其成员变量有两个</p>
-<pre class="line-numbers language-c++" data-language="c++"><code class="language-c++">std::vector&lt;TimerNode&gt; heap_;
-std::unordered_map&lt;int, size_t&gt; ref_;<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span></span></code></pre>
-<p> <code>heap_</code>用来存储<code>TimerNode</code></p>
-<h4 id="2-2-1-堆的构建"><a href="#2-2-1-堆的构建" class="headerlink" title="2.2.1 堆的构建"></a>2.2.1 堆的构建</h4><p> 参考<code>STL</code>中堆的构建方法，<br>首先看<code>siftup_</code>代码：</p>
-<pre class="line-numbers language-c++" data-language="c++"><code class="language-c++">void HeapTimer::siftup_(size_t i)&#123;
+<h3 id="heaptimer">2.2 <code>HeapTimer</code></h3>
+<p><code>heapTimer</code>自定义 其成员变量有两个 <pre class="line-numbers language-c++" data-language="c++"><code class="language-c++">std::vector&lt;TimerNode&gt; heap_;
+std::unordered_map&lt;int, size_t&gt; ref_;<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span></span></code></pre> <code>heap_</code>用来存储<code>TimerNode</code> #### 2.2.1 堆的构建 参考<code>STL</code>中堆的构建方法， 首先看<code>siftup_</code>代码： <pre class="line-numbers language-c++" data-language="c++"><code class="language-c++">void HeapTimer::siftup_(size_t i)&#123;
 	assert(i&gt;&#x3D;0 &amp;&amp; i&lt;heap.size());
 	size_t j &#x3D; (i-1)&#x2F;2; &#x2F;&#x2F;找到父节点
 	while(j&gt;&#x3D;0)&#123;
 		
-	&#125;<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
-
-
-
+	&#125;<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre></p>
 
                 
             </div>

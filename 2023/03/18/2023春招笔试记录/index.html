@@ -394,7 +394,9 @@ int main()&#123;
     vector&lt;int&gt; a &#x3D; &#123;-3, 4, -5, 32, -10, 3, -2, 2, 5&#125;;
     int k &#x3D; 4;
     cout &lt;&lt; getMaxProfit(a, k) &lt;&lt; endl;
-&#125;<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre> ### DNA Sequencing Some data scientists are building a utility to analyze palindromic trends in the DNA sequencing of a string. The palindrome transformation cost of a string is defined as the minimum number of characters that need to be changed in it so that it can be rearranged to form a palindrome. For example, the palindrome transformation cost of the string "aabcd" is 1 as we can change the last character 'd' to 'c'so that the string becomes "aabcc" that can be rearranged to "acbca" which is a palindrome.</p>
+&#125;<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre></p>
+<h3 id="dna-sequencing">DNA Sequencing</h3>
+<p>Some data scientists are building a utility to analyze palindromic trends in the DNA sequencing of a string. The palindrome transformation cost of a string is defined as the minimum number of characters that need to be changed in it so that it can be rearranged to form a palindrome. For example, the palindrome transformation cost of the string "aabcd" is 1 as we can change the last character 'd' to 'c'so that the string becomes "aabcc" that can be rearranged to "acbca" which is a palindrome.</p>
 <p>Given string dna, find the total sum of palindrome transformation cost of all the substrings of the given string.</p>
 <p>Note: A palindrome is a sequence that reads the same backward as forward, for example, sequences "z", "aba" and "aaa" are palindromes, but sequences "×y", "rank" are not.</p>
 <h4 id="example-1">Example</h4>
@@ -442,14 +444,19 @@ long getMaxProfit(string s)&#123;
 int main()&#123;
     cout &lt;&lt; getMaxProfit(&quot;abca&quot;) &lt;&lt; endl;
     return 0;
-&#125;<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre> ## 阿里 2023 http://101.43.147.120/p/P1082 题目内容 给定一棵二又树，试求这棵二叉树有多少个节点满足以该节点为根的子树是满二叉树?</p>
+&#125;<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre></p>
+<h2 id="阿里-2023">阿里 2023</h2>
+<p>http://101.43.147.120/p/P1082 题目内容 给定一棵二又树，试求这棵二叉树有多少个节点满足以该节点为根的子树是满二叉树?</p>
 <p>我们定义一棵树是满二叉树，当且仅当每一层的节点数量都达到了最大值(即无法在这一层添加新节点)。</p>
 <p>输入描述 第一行输入一个正整数n，代表节点的数量。</p>
 <p>接下来的n行，第i行输入两个整数<span class="math inline">\(l_i\)</span>，代表 � i号节点的左儿子和右儿子。请注意，如果一个节点没有左儿子/右儿子，则对应的 � � l i ​ / � � r i ​ 为- 1 1。 1 ≤ ≤ � n ≤ ≤ 1 0 5 10 5</p>
 <p>输出描述 子树为满二又树的节点数量。</p>
-<p>样例 1 1 输入</p>
-<p>5 2 3 4 5 -1 -1 -1 -1 -1 -1 输出</p>
-<p>4 说明 2 2、 3 3、 4 4、 5 5号节点的子树都是满二叉树</p>
+<p>样例1 输入 <pre class="line-numbers language-none"><code class="language-none">5
+2 3
+4 5
+-1 -1
+-1 -1
+-1 -1<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre> 输出 <pre class="line-numbers language-none"><code class="language-none">4<span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre> 说明 2, 3, 4, 5号节点的子树都是满二叉树</p>
 <h2 id="reference">reference</h2>
 <p>位运算的技巧 https://www.cnblogs.com/RioTian/p/13598747.html</p>
 

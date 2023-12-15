@@ -6,9 +6,10 @@
     <meta charset="utf-8">
     <meta name="keywords" content="miniob项目总结, xjmxyt的小空间">
     <meta name="description" content="存储部分
+
 BufferPoolManager管理file到BufferPool的映射关系（一对多）
 BufferPool管理文件和磁盘的映射关系
-BPFrameManager管理文件和Frame之间的关系，从fd+page_num就可以获取">
+BPFrameManager管理文件和Frame之间的关系，从fd+page_num就可以获">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
     <meta name="renderer" content="webkit|ie-stand|ie-comp">
@@ -358,7 +359,8 @@ BPFrameManager管理文件和Frame之间的关系，从fd+page_num就可以获�
 
         <div class="card-content article-card-content">
             <div id="articleContent">
-                <h2 id="存储部分"><a href="#存储部分" class="headerlink" title="存储部分"></a>存储部分</h2><ul>
+                <h2 id="存储部分">存储部分</h2>
+<ul>
 <li><code>BufferPoolManager</code>管理<code>file</code>到<code>BufferPool</code>的映射关系（一对多）</li>
 <li><code>BufferPool</code>管理文件和磁盘的映射关系</li>
 <li><code>BPFrameManager</code>管理文件和<code>Frame</code>之间的关系，从<code>fd+page_num</code>就可以获取对应的页</li>
@@ -435,10 +437,10 @@ private:
 &#125;
 
 <span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
-
-<h2 id="parse-stage"><a href="#parse-stage" class="headerlink" title="parse stage"></a>parse stage</h2><h3 id="解析部分结构体的定义"><a href="#解析部分结构体的定义" class="headerlink" title="解析部分结构体的定义"></a>解析部分结构体的定义</h3><p>以<code>select</code>为例，分为<code>attribute</code>,<code>relation</code>,<code>condition</code>三个部分，<code>update</code>分为<code>relation_name</code>,<code>attribute_name</code>,<code>value</code>,<code>condition</code>三部分<br>总的说来，<code>attribute</code>是需要更改的属性，<code>relation</code>是涉及到的<code>table</code>的名字，<code>condition</code>是<code>where</code>后面的条件，<code>value</code>是赋予的取值</p>
-<p>在定义了不同的语句之后，用<code>union</code>结构体存储下来，定义<code>Query</code>来表明输入的语句，里面存有<code>union</code>结构体，和表明该结构是什么类型</p>
-<pre class="line-numbers language-c++" data-language="c++"><code class="language-c++">typedef struct _Condition &#123;
+<h2 id="parse-stage">parse stage</h2>
+<h3 id="解析部分结构体的定义">解析部分结构体的定义</h3>
+<p>以<code>select</code>为例，分为<code>attribute</code>,<code>relation</code>,<code>condition</code>三个部分，<code>update</code>分为<code>relation_name</code>,<code>attribute_name</code>,<code>value</code>,<code>condition</code>三部分 总的说来，<code>attribute</code>是需要更改的属性，<code>relation</code>是涉及到的<code>table</code>的名字，<code>condition</code>是<code>where</code>后面的条件，<code>value</code>是赋予的取值</p>
+<p>在定义了不同的语句之后，用<code>union</code>结构体存储下来，定义<code>Query</code>来表明输入的语句，里面存有<code>union</code>结构体，和表明该结构是什么类型 <pre class="line-numbers language-c++" data-language="c++"><code class="language-c++">typedef struct _Condition &#123;
   int left_is_attr;    &#x2F;&#x2F; TRUE if left-hand side is an attribute
                        &#x2F;&#x2F; 1时，操作符左边是属性名，0时，是属性值
   Value left_value;    &#x2F;&#x2F; left-hand side value if left_is_attr &#x3D; FALSE
@@ -472,10 +474,9 @@ typedef struct &#123;
 typedef struct Query &#123;
   enum SqlCommandFlag flag;
   union Queries sstr;
-&#125; Query;<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
-<h2 id="resolve-stage"><a href="#resolve-stage" class="headerlink" title="resolve stage"></a>resolve stage</h2><h3 id="stmt"><a href="#stmt" class="headerlink" title="stmt"></a>stmt</h3><p>最关键的模块是<code>Stmt</code>的<code>create_stmt</code>函数(<code>static</code>方法)，所有的<code>Stmt</code>都继承了该类，例如<code>SelectStmt</code>,<code>InsertStmt</code>等，该<code>Stmt</code>会被流转到下一个阶段</p>
-<h3 id="table相关的内存结构"><a href="#table相关的内存结构" class="headerlink" title="table相关的内存结构"></a>table相关的内存结构</h3><p>将最初的<code>sql</code>结构体转化为<code>statement</code>结构体，检查<code>table</code>是否存在，把要用到的<code>table</code>放进<code>stmt</code>中，把<code>*</code>展开为属性放进<code>stmt</code>中，隐式类型转换等等</p>
-<pre class="line-numbers language-c++" data-language="c++"><code class="language-c++">class Field&#123;
+&#125; Query;<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre> ## resolve stage ### stmt 最关键的模块是<code>Stmt</code>的<code>create_stmt</code>函数(<code>static</code>方法)，所有的<code>Stmt</code>都继承了该类，例如<code>SelectStmt</code>,<code>InsertStmt</code>等，该<code>Stmt</code>会被流转到下一个阶段</p>
+<h3 id="table相关的内存结构">table相关的内存结构</h3>
+<p>将最初的<code>sql</code>结构体转化为<code>statement</code>结构体，检查<code>table</code>是否存在，把要用到的<code>table</code>放进<code>stmt</code>中，把<code>*</code>展开为属性放进<code>stmt</code>中，隐式类型转换等等 <pre class="line-numbers language-c++" data-language="c++"><code class="language-c++">class Field&#123;
   const Table *table_ &#x3D; nullptr;
   const FieldMeta *field_ &#x3D; nullptr;
 &#125;
@@ -502,35 +503,19 @@ class Table&#123;
   DiskBufferPool *data_buffer_pool_ &#x3D; nullptr;   &#x2F;&#x2F;&#x2F; 数据文件关联的buffer pool
   RecordFileHandler *record_handler_ &#x3D; nullptr;  &#x2F;&#x2F;&#x2F; 记录操作
   std::vector&lt;Index *&gt; indexes_;
-&#125;<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
-
-<h3 id="filter-stmt的设计"><a href="#filter-stmt的设计" class="headerlink" title="filter_stmt的设计"></a>filter_stmt的设计</h3><p>分为<code>FilterUnit</code>和<code>FilterStmt</code>，对于形如<code>condition1 and condition2</code>这样的语句，<code>condition1</code>作为一个<code>FilterUnit</code>，而<code>FilterStmt</code>存储的是多个<code>FilterStmt</code>的和</p>
-<p>下面来到<code>FilterUnit</code>的设计，<code>FilterUnit</code>可以拆解为<code>Expression op Expression</code>，因此只需要包含这几个结构</p>
-<pre class="line-numbers language-c++" data-language="c++"><code class="language-c++">class FilterUnit&#123;
+&#125;<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre></p>
+<h3 id="filter_stmt的设计">filter_stmt的设计</h3>
+<p>分为<code>FilterUnit</code>和<code>FilterStmt</code>，对于形如<code>condition1 and condition2</code>这样的语句，<code>condition1</code>作为一个<code>FilterUnit</code>，而<code>FilterStmt</code>存储的是多个<code>FilterStmt</code>的和</p>
+<p>下面来到<code>FilterUnit</code>的设计，<code>FilterUnit</code>可以拆解为<code>Expression op Expression</code>，因此只需要包含这几个结构 <pre class="line-numbers language-c++" data-language="c++"><code class="language-c++">class FilterUnit&#123;
   CompOp comp_ &#x3D; NO_OP;
   Expression *left_ &#x3D; nullptr;
   Expression *right_ &#x3D; nullptr;
 &#125;
 class FilterStmt &#123;
 	std::vector&lt;FilterUnit *&gt;  filter_units_;
-&#125;<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
-
-
-<h3 id="expression的设计"><a href="#expression的设计" class="headerlink" title="expression的设计"></a>expression的设计</h3><p><code>TupleCell</code>和<code>Tuple</code>的定义</p>
-<ul>
-<li><code>TupleCell</code>存储了真正的数据，调用<code>tuple</code>的<code>cell_at(index, cell)</code>方法可以用<code>table</code>中的数据填充其值</li>
-<li><code>Tuple</code>是一个抽象类，派生出的对象包括<code>RowTuple</code>和<code>ProjectTuple</code>，它是<code>Operator</code>会返回的值<ul>
-<li><code>RowTuple</code>: 包含了<code>record</code>, <code>table</code>, <code>vector&lt;TupleCellSpec *&gt;</code></li>
-<li><code>ProjectTuple</code>：包含了<code>vector&lt;TupleCellSpec *&gt;</code>, <code>tuple</code></li>
-</ul>
-</li>
-<li><code>TupleCellSpec</code>包含<code>Expression</code></li>
-<li><code>Expression</code>作为抽象类，包括<code>FieldExpr</code>和<code>ValueExpr</code>，<code>FieldExpr</code>包含<code>Field</code>，<code>ValueExpr</code>包含<code>TupleCell</code><ul>
-<li><code>FieldExpr</code>：包含<code>Field</code></li>
-<li><code>ValueExpr</code>：包含<code>TupleCell</code></li>
-</ul>
-</li>
-</ul>
+&#125;<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre></p>
+<h3 id="expression的设计">expression的设计</h3>
+<p><code>TupleCell</code>和<code>Tuple</code>的定义 - <code>TupleCell</code>存储了真正的数据，调用<code>tuple</code>的<code>cell_at(index, cell)</code>方法可以用<code>table</code>中的数据填充其值 - <code>Tuple</code>是一个抽象类，派生出的对象包括<code>RowTuple</code>和<code>ProjectTuple</code>，它是<code>Operator</code>会返回的值 - <code>RowTuple</code>: 包含了<code>record</code>, <code>table</code>, <code>vector&lt;TupleCellSpec *&gt;</code> - <code>ProjectTuple</code>：包含了<code>vector&lt;TupleCellSpec *&gt;</code>, <code>tuple</code> - <code>TupleCellSpec</code>包含<code>Expression</code> - <code>Expression</code>作为抽象类，包括<code>FieldExpr</code>和<code>ValueExpr</code>，<code>FieldExpr</code>包含<code>Field</code>，<code>ValueExpr</code>包含<code>TupleCell</code> - <code>FieldExpr</code>：包含<code>Field</code> - <code>ValueExpr</code>：包含<code>TupleCell</code></p>
 <pre class="line-numbers language-c++" data-language="c++"><code class="language-c++">class TupleCell&#123;
   AttrType attr_type_ &#x3D; UNDEFINED;
   int length_ &#x3D; -1;
@@ -541,13 +526,11 @@ class TupleCellSpec&#123;
   const char *alias_ &#x3D; nullptr;
   Expression *expression_ &#x3D; nullptr;
 &#125;<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
-
-<h2 id="Execute-Stage"><a href="#Execute-Stage" class="headerlink" title="Execute Stage"></a>Execute Stage</h2><h3 id="总体流程"><a href="#总体流程" class="headerlink" title="总体流程"></a>总体流程</h3><p>通过<code>stmt-&gt;type</code>转到对应的执行函数，执行函数使用算子进行组装，下面以do_select为例进行讲解</p>
-<pre class="line-numbers language-none"><code class="language-none">1. 首先做existence check
+<h2 id="execute-stage">Execute Stage</h2>
+<h3 id="总体流程">总体流程</h3>
+<p>通过<code>stmt-&gt;type</code>转到对应的执行函数，执行函数使用算子进行组装，下面以do_select为例进行讲解 <pre class="line-numbers language-none"><code class="language-none">1. 首先做existence check
 2. 创建ScanOperator, PredicateOperator, ProjectOperator, ScanOperator作为PredicateOperator的child，PredicateOperator作为ProjectOperator的child，这样一层层的调用next函数，就能获得最下层的结果
-3. 结果存储在ProjectOperator的current_tuple[Tuple]中<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span></span></code></pre>
-<h3 id="Operator的定义"><a href="#Operator的定义" class="headerlink" title="Operator的定义"></a>Operator的定义</h3><p>基类为<code>Operator</code>，主要包含了<code>open</code>, <code>next</code>, <code>close</code>, <code>current_tuple</code>, <code>add_child</code>方法<br>定义如下</p>
-<pre class="line-numbers language-none"><code class="language-none">class Operator
+3. 结果存储在ProjectOperator的current_tuple[Tuple]中<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span></span></code></pre> ### Operator的定义 基类为<code>Operator</code>，主要包含了<code>open</code>, <code>next</code>, <code>close</code>, <code>current_tuple</code>, <code>add_child</code>方法 定义如下 <pre class="line-numbers language-none"><code class="language-none">class Operator
 &#123;
 public:
   Operator()
@@ -569,49 +552,15 @@ public:
 
 protected:
   std::vector&lt;Operator *&gt; children_;
-&#125;;<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
-
-<p>最关键的函数是<code>next</code>，其主要功能是</p>
-<ul>
-<li>调用<code>child.next</code>让<code>child</code>进行下一步操作</li>
-<li>调用<code>child.current_tuple</code>获取<code>child</code>的现在的元素(<code>tuple</code>)</li>
-<li>调用自己的方法对<code>tuple</code>进行处理，搭配传入的<code>stmt</code>进行运算</li>
-</ul>
-<p>例如，对于<code>PredicateOperator</code>做的事如下：</p>
-<ul>
-<li>一直调用下一层的<code>next</code>方法，对获得的<code>tuple</code>判断是否符合条件</li>
-<li>不符合就一直循环到符合条件返回</li>
-<li>比较时采用<code>do_predicate</code>函数<ul>
-<li>通过<code>filter_stmt_</code>获取左右两边的<code>expression</code>，<code>expression</code>的<code>getValue</code>方法能从<code>Tuple</code>中把值获取到<code>TupleCell</code>中</li>
-<li>调用<code>TupleCell</code>的<code>compare</code>方法</li>
-<li>返回结果</li>
-</ul>
-</li>
-</ul>
-<p>对于<code>TableScanner</code>做的事是</p>
-<ul>
-<li>在<code>open</code>阶段就初始化必要的成员变量</li>
-<li>在<code>next</code>方法中，用<code>RecordScanner</code>的<code>fetch_next_record</code>去获得记录<code>Record</code></li>
-<li>如果在一个页中<ul>
-<li>实际上是采用的<code>RecordPageIterator</code>去取得记录</li>
-<li>通过<code>bitmap_</code>去取得<code>SlotNum</code>，然后用<code>frame_-&gt;data() + page_header_-&gt;first_record_offset + (page_header_-&gt;record_size * slot_num)</code>取得<code>record</code>的值</li>
-</ul>
-</li>
-<li>如果不在一个页面中<ul>
-<li><code>BufferPoolIterator</code>会去通过<code>bitmap</code>取得下一个<code>pageNum</code></li>
-</ul>
-</li>
-<li>返回值是<code>Tuple</code>，里面包含了<code>Record</code></li>
-</ul>
+&#125;;<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre></p>
+<p>最关键的函数是<code>next</code>，其主要功能是 - 调用<code>child.next</code>让<code>child</code>进行下一步操作 - 调用<code>child.current_tuple</code>获取<code>child</code>的现在的元素(<code>tuple</code>) - 调用自己的方法对<code>tuple</code>进行处理，搭配传入的<code>stmt</code>进行运算</p>
+<p>例如，对于<code>PredicateOperator</code>做的事如下： - 一直调用下一层的<code>next</code>方法，对获得的<code>tuple</code>判断是否符合条件 - 不符合就一直循环到符合条件返回 - 比较时采用<code>do_predicate</code>函数 - 通过<code>filter_stmt_</code>获取左右两边的<code>expression</code>，<code>expression</code>的<code>getValue</code>方法能从<code>Tuple</code>中把值获取到<code>TupleCell</code>中 - 调用<code>TupleCell</code>的<code>compare</code>方法 - 返回结果</p>
+<p>对于<code>TableScanner</code>做的事是 - 在<code>open</code>阶段就初始化必要的成员变量 - 在<code>next</code>方法中，用<code>RecordScanner</code>的<code>fetch_next_record</code>去获得记录<code>Record</code> - 如果在一个页中 - 实际上是采用的<code>RecordPageIterator</code>去取得记录 - 通过<code>bitmap_</code>去取得<code>SlotNum</code>，然后用<code>frame_-&gt;data() + page_header_-&gt;first_record_offset + (page_header_-&gt;record_size * slot_num)</code>取得<code>record</code>的值 - 如果不在一个页面中 - <code>BufferPoolIterator</code>会去通过<code>bitmap</code>取得下一个<code>pageNum</code> - 返回值是<code>Tuple</code>，里面包含了<code>Record</code></p>
 <pre class="line-numbers language-c++" data-language="c++"><code class="language-c++">class Record
 &#123;
   RID                            rid_;
   char *                         data_ &#x3D; nullptr;
 &#125;<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span></span></code></pre>
-
-
-
-
 
                 
             </div>

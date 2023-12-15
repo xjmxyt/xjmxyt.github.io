@@ -523,9 +523,10 @@ A data analyst wants to analyze the performance of his investments in the HackSh
                             <div class="summary block-with-text">
                                 
                                     存储部分
+
 BufferPoolManager管理file到BufferPool的映射关系（一对多）
 BufferPool管理文件和磁盘的映射关系
-BPFrameManager管理文件和Frame之间的关系，从fd+page_num就可以获取
+BPFrameManager管理文件和Frame之间的关系，从fd+page_num就可以获
                                 
                             </div>
                             <div class="publish-info">
@@ -574,14 +575,15 @@ BPFrameManager管理文件和Frame之间的关系，从fd+page_num就可以获�
                         <div class="card-content article-content">
                             <div class="summary block-with-text">
                                 
-                                    智能指针#include &lt;iostream&gt;
+                                    智能指针
+#include &lt;iostream&gt;
 #include &lt;memory&gt;
 
 using namespace std;
 
 template&lt;class T&gt;
 
-class my_shared_pt
+class my_shared_p
                                 
                             </div>
                             <div class="publish-info">
@@ -631,8 +633,10 @@ class my_shared_pt
                             <div class="summary block-with-text">
                                 
                                     A tiny introduction to asynchronous IO
-Q：阻塞I&#x2F;O存在的问题A：必须前一个读完，才能读下一个。可以采用fork子进程 或者 非阻塞I&#x2F;O进行
-Q：非阻塞I&#x2F;O运行和存在
+Q：阻塞I/O存在的问题
+A：必须前一个读完，才能读下一个。可以采用fork子进程 或者 非阻塞I/O进行
+Q：非阻塞I/O运行和存在的问题
+A：通过设置fcnt
                                 
                             </div>
                             <div class="publish-info">
@@ -681,15 +685,9 @@ Q：非阻塞I&#x2F;O运行和存在
                         <div class="card-content article-content">
                             <div class="summary block-with-text">
                                 
-                                    课程部分Overview主要是从以下几个部分来介绍：
-
-GFS
-VMWARE FT
-Raft
-Zookeeper
-More Replication, CRAQ
-Cloud Replicated DB, Aurora
-Cache Consis
+                                    课程部分
+Overview
+主要是从以下几个部分来介绍： - GFS - VMWARE FT - Raft - Zookeeper - More Replication, CRAQ - Cloud Replicated DB, Aurora
                                 
                             </div>
                             <div class="publish-info">
@@ -744,9 +742,7 @@ Cache Consis
                         <div class="card-content article-content">
                             <div class="summary block-with-text">
                                 
-                                    这一节课主要对go中会用到的模式进行讲解，感觉和c++多线程编程差不多吧，重点就是知道怎么使用
-并发原语首先是介绍了在go编程中使用的一些模式，同时需要注意的点
-go loop经常利用 WaitGroup 来在父 goroutine 中阻塞
+                                    这一节课主要对go中会用到的模式进行讲解，感觉和c++多线程编程差不多吧，重点就是知道怎么使用 ## 并发原语 首先是介绍了在go编程中使用的一些模式，同时需要注意的点 ### go loop 经常利用 WaitGroup 来在父 goro
                                 
                             </div>
                             <div class="publish-info">
@@ -801,8 +797,10 @@ go loop经常利用 WaitGroup 来在父 goroutine 中阻塞
                         <div class="card-content article-content">
                             <div class="summary block-with-text">
                                 
-                                    一直看到各路博主安利这门书，在家里的书柜里把之前买了一直没看的这本书又翻了出来。读这本书的感受大概是——很有意思的算法题……于是将有意思的题记录下来
-第一章 游戏之乐将帅问题中国象棋中的将帅不能碰面，假设A为将，B为帅，则A,B分别只能在己
+                                    一直看到各路博主安利这门书，在家里的书柜里把之前买了一直没看的这本书又翻了出来。读这本书的感受大概是——很有意思的算法题......于是将有意思的题记录下来
+第一章 游戏之乐
+将帅问题
+中国象棋中的将帅不能碰面，假设A为将，B为帅，则A,B
                                 
                             </div>
                             <div class="publish-info">
@@ -857,7 +855,8 @@ go loop经常利用 WaitGroup 来在父 goroutine 中阻塞
                         <div class="card-content article-content">
                             <div class="summary block-with-text">
                                 
-                                    分布式系统——GFS文件系统参考论文: https://pdos.csail.mit.edu/6.824/papers/gfs.pdf
+                                    分布式系统——GFS文件系统
+参考论文: https://pdos.csail.mit.edu/6.824/papers/gfs.pdf
 
 
 
@@ -922,16 +921,16 @@ go loop经常利用 WaitGroup 来在父 goroutine 中阻塞
                             <div class="summary block-with-text">
                                 
                                     课程链接
-主从备份可以工作的前提是：主从机器出错的概率是相互独立的
-主从备份同步状态的级别
+主从备份可以工作的前提是：主从机器出错的概率是相互独立的 ## 主从备份
+同步状态的级别
+
 应用层
-  GFS采取的是应用层的同步
-
+GFS采取的是应用层的同步
 机器层
-  运行的服务器无需改动而获取容错能力，但需要更细粒度的同步，例如中断DMA
-
+运行的服务器无需改动而获取容错能力，但需要更细粒度的同步，例如中断DMA
 
 两种备份的方式
+
 
                                 
                             </div>
@@ -991,8 +990,7 @@ go loop经常利用 WaitGroup 来在父 goroutine 中阻塞
                         <div class="card-content article-content">
                             <div class="summary block-with-text">
                                 
-                                    在第三部分，主要对日志系统log和定时器timer进行分析
-1 日志loglog部分由三部分组成，blockqueue.h, log.h, log.cpp，blockqueue是封装的类似deque的能进行并发访问和操作的底层结构，log.
+                                    在第三部分，主要对日志系统log和定时器timer进行分析 ## 1 日志log log部分由三部分组成，blockqueue.h, log.h, log.cpp，blockqueue是封装的类似deque的能进行并发访问和操作的底层结构，
                                 
                             </div>
                             <div class="publish-info">

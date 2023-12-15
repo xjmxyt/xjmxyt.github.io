@@ -5,12 +5,14 @@
 <head>
     <meta charset="utf-8">
     <meta name="keywords" content="makefile, xjmxyt的小空间">
-    <meta name="description" content="MakeFile工作原理一个规则目标: 依赖条件
+    <meta name="description" content="MakeFile工作原理
+一个规则
+目标: 依赖条件
 	生成方法
 1. 目标生成的时间必须晚于依赖条件的时间，否则，更新目录
 2. 依赖条件如果不存在，寻找新的规则去产生依赖
 hello:hello.c
-	gcc hello.c -o hell">
+	gcc hello.c -o he">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
     <meta name="renderer" content="webkit|ie-stand|ie-comp">
@@ -373,14 +375,15 @@ hello:hello.c
 
         <div class="card-content article-card-content">
             <div id="articleContent">
-                <h2 id="MakeFile工作原理"><a href="#MakeFile工作原理" class="headerlink" title="MakeFile工作原理"></a>MakeFile工作原理</h2><h3 id="一个规则"><a href="#一个规则" class="headerlink" title="一个规则"></a>一个规则</h3><pre class="line-numbers language-bash" data-language="bash"><code class="language-bash">目标: 依赖条件
+                <h2 id="makefile工作原理">MakeFile工作原理</h2>
+<h3 id="一个规则">一个规则</h3>
+<pre class="line-numbers language-bash" data-language="bash"><code class="language-bash">目标: 依赖条件
 	生成方法
 <span class="token number">1</span>. 目标生成的时间必须晚于依赖条件的时间，否则，更新目录
 <span class="token number">2</span>. 依赖条件如果不存在，寻找新的规则去产生依赖
 hello:hello.c
 	gcc hello.c <span class="token parameter variable">-o</span> hello<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
-<p>会先检查依赖条件是否满足，如果满足则会执行，下面给出一个编译的例子</p>
-<pre class="line-numbers language-bash" data-language="bash"><code class="language-bash">ALL:a.out 指定makefile的终极目标
+<p>会先检查依赖条件是否满足，如果满足则会执行，下面给出一个编译的例子 <pre class="line-numbers language-bash" data-language="bash"><code class="language-bash">ALL:a.out 指定makefile的终极目标
 a.out:hello.o add.o sub.o div.o
 	gcc hello.o add.o sub.o div.o <span class="token parameter variable">-o</span> a.out
 hello.o:hello.c
@@ -388,13 +391,8 @@ hello.o:hello.c
 add.o:add.c
 	gcc <span class="token parameter variable">-c</span> add.c <span class="token parameter variable">-o</span> add.o
 sub.o:sub.c
-	gcc <span class="token parameter variable">-c</span> sub.c <span class="token parameter variable">-o</span> sub.o<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
-
-<p>检查规则中的目标是否需要更新，必须先检查它的所有依赖，依赖中有任一个被更新，则目标必须更新</p>
-<h3 id="两个函数"><a href="#两个函数" class="headerlink" title="两个函数"></a>两个函数</h3><p><code>$(wildcard *.c)</code>将后面格式<code>.c</code>的文件都提取出来，将文件名组成列表</p>
-<pre class="line-numbers language-bash" data-language="bash"><code class="language-bash">src <span class="token operator">=</span> <span class="token variable"><span class="token variable">$(</span>wildcard *.c<span class="token variable">)</span></span><span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>
-<p><code>$(patsubst %.c, %.o, $(src))</code>：将参数3中，包含参数1的部分，替换为参数2</p>
-<pre class="line-numbers language-bash" data-language="bash"><code class="language-bash">src <span class="token operator">=</span> <span class="token variable"><span class="token variable">$(</span>wildcard *.c<span class="token variable">)</span></span> 
+	gcc <span class="token parameter variable">-c</span> sub.c <span class="token parameter variable">-o</span> sub.o<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre></p>
+<p>检查规则中的目标是否需要更新，必须先检查它的所有依赖，依赖中有任一个被更新，则目标必须更新 ### 两个函数 <code>$(wildcard *.c)</code>将后面格式<code>.c</code>的文件都提取出来，将文件名组成列表 <pre class="line-numbers language-bash" data-language="bash"><code class="language-bash">src <span class="token operator">=</span> <span class="token variable"><span class="token variable">$(</span>wildcard *.c<span class="token variable">)</span></span><span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre> <code>$(patsubst %.c, %.o, $(src))</code>：将参数3中，包含参数1的部分，替换为参数2 <pre class="line-numbers language-bash" data-language="bash"><code class="language-bash">src <span class="token operator">=</span> <span class="token variable"><span class="token variable">$(</span>wildcard *.c<span class="token variable">)</span></span> 
 obj <span class="token operator">=</span> <span class="token variable"><span class="token variable">$(</span>patsubst %.c, %.o, <span class="token punctuation">$(</span>src<span class="token punctuation">)</span><span class="token variable">)</span></span>
 myargs <span class="token operator">=</span> <span class="token parameter variable">-Wall</span> <span class="token parameter variable">-g</span>
 
@@ -402,9 +400,9 @@ a.out:<span class="token variable"><span class="token variable">$(</span>obj<spa
 	gcc <span class="token variable"><span class="token variable">$(</span>obj<span class="token variable">)</span></span> <span class="token parameter variable">-o</span> a.out <span class="token variable"><span class="token variable">$(</span>myargs<span class="token variable">)</span></span>
 
 clean:
-	<span class="token parameter variable">-rm</span> <span class="token parameter variable">-rf</span> <span class="token variable"><span class="token variable">$(</span>obj<span class="token variable">)</span></span> a.out <span class="token comment">#前面的-表示出错仍旧执行</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
-<p><code>clean</code>的模拟执行：<code>make clean -n</code>，不会实际执行</p>
-<h3 id="三个自动变量"><a href="#三个自动变量" class="headerlink" title="三个自动变量"></a>三个自动变量</h3><ul>
+	<span class="token parameter variable">-rm</span> <span class="token parameter variable">-rf</span> <span class="token variable"><span class="token variable">$(</span>obj<span class="token variable">)</span></span> a.out <span class="token comment">#前面的-表示出错仍旧执行</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre> <code>clean</code>的模拟执行：<code>make clean -n</code>，不会实际执行</p>
+<h3 id="三个自动变量">三个自动变量</h3>
+<ul>
 <li><code>$@</code>: 在规则的命令中，表示规则中的目标</li>
 <li><code>$^</code>: 在规则的命令中，表示第所有依赖条件</li>
 <li><code>$&lt;</code>: 在规则的命令中，表示第一个依赖条件，如果将该变量应用在模式规则中，可将依赖条件列表依次去除，套用模式规则</li>
@@ -414,14 +412,12 @@ obj <span class="token operator">=</span> <span class="token variable"><span cla
 
 a.out:<span class="token variable"><span class="token variable">$(</span>obj<span class="token variable">)</span></span>
 	gcc $^ <span class="token parameter variable">-o</span> <span class="token variable">$@</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span></span></code></pre>
-
-<h3 id="模式规则"><a href="#模式规则" class="headerlink" title="模式规则"></a>模式规则</h3><pre class="line-numbers language-bash" data-language="bash"><code class="language-bash">%o:%.c
+<h3 id="模式规则">模式规则</h3>
+<pre class="line-numbers language-bash" data-language="bash"><code class="language-bash">%o:%.c
 	gcc $<span class="token operator">&lt;</span> <span class="token parameter variable">-o</span> <span class="token variable">$@</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span></span></code></pre>
-<p>静态模式规则：</p>
-<pre class="line-numbers language-bash" data-language="bash"><code class="language-bash"><span class="token variable"><span class="token variable">$(</span>obj<span class="token variable">)</span></span>:%.o:%.c
-	gcc <span class="token parameter variable">-c</span> $<span class="token operator">&lt;</span> <span class="token parameter variable">-o</span> <span class="token variable">$@</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span></span></code></pre>
-<p>伪目标</p>
-<pre class="line-numbers language-bash" data-language="bash"><code class="language-bash">.PHONY: clean ALL<span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>
+<p>静态模式规则： <pre class="line-numbers language-bash" data-language="bash"><code class="language-bash"><span class="token variable"><span class="token variable">$(</span>obj<span class="token variable">)</span></span>:%.o:%.c
+	gcc <span class="token parameter variable">-c</span> $<span class="token operator">&lt;</span> <span class="token parameter variable">-o</span> <span class="token variable">$@</span><span aria-hidden="true" class="line-numbers-rows"><span></span><span></span></span></code></pre> 伪目标 <pre class="line-numbers language-bash" data-language="bash"><code class="language-bash">.PHONY: clean ALL<span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre></p>
+
                 
             </div>
             <hr/>

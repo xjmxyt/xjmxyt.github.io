@@ -6,8 +6,10 @@
     <meta charset="utf-8">
     <meta name="keywords" content="libevent库学习笔记, xjmxyt的小空间">
     <meta name="description" content="A tiny introduction to asynchronous IO
-Q：阻塞I&amp;#x2F;O存在的问题A：必须前一个读完，才能读下一个。可以采用fork子进程 或者 非阻塞I&amp;#x2F;O进行
-Q：非阻塞I&amp;#x2F;O运行和存在">
+Q：阻塞I/O存在的问题
+A：必须前一个读完，才能读下一个。可以采用fork子进程 或者 非阻塞I/O进行
+Q：非阻塞I/O运行和存在的问题
+A：通过设置fcnt">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
     <meta name="renderer" content="webkit|ie-stand|ie-comp">
@@ -358,9 +360,10 @@ Q：非阻塞I&amp;#x2F;O运行和存在">
         <div class="card-content article-card-content">
             <div id="articleContent">
                 <p><a target="_blank" rel="noopener" href="http://www.wangafu.net/~nickm/libevent-book/01_intro.html">A tiny introduction to asynchronous IO</a></p>
-<h2 id="Q：阻塞I-x2F-O存在的问题"><a href="#Q：阻塞I-x2F-O存在的问题" class="headerlink" title="Q：阻塞I&#x2F;O存在的问题"></a>Q：阻塞I&#x2F;O存在的问题</h2><p>A：必须前一个读完，才能读下一个。可以采用fork子进程 或者 非阻塞I&#x2F;O进行</p>
-<h2 id="Q：非阻塞I-x2F-O运行和存在的问题"><a href="#Q：非阻塞I-x2F-O运行和存在的问题" class="headerlink" title="Q：非阻塞I&#x2F;O运行和存在的问题"></a>Q：非阻塞I&#x2F;O运行和存在的问题</h2><p>A：通过设置<code>fcntl(fd, F_SETFL, O_NONBLOCK);</code>如果没有数据，会返回<code>EAGAIN</code>，参考代码如下</p>
-<pre class="line-numbers language-c++" data-language="c++"><code class="language-c++">&#x2F;* This will work, but the performance will be unforgivably bad. *&#x2F;
+<h2 id="q阻塞io存在的问题">Q：阻塞I/O存在的问题</h2>
+<p>A：必须前一个读完，才能读下一个。可以采用fork子进程 或者 非阻塞I/O进行</p>
+<h2 id="q非阻塞io运行和存在的问题">Q：非阻塞I/O运行和存在的问题</h2>
+<p>A：通过设置<code>fcntl(fd, F_SETFL, O_NONBLOCK);</code>如果没有数据，会返回<code>EAGAIN</code>，参考代码如下 <pre class="line-numbers language-c++" data-language="c++"><code class="language-c++">&#x2F;* This will work, but the performance will be unforgivably bad. *&#x2F;
 int i, n;
 char buf[1024];
 for (i&#x3D;0; i &lt; n_sockets; ++i)
@@ -380,10 +383,11 @@ while (i_still_want_to_read()) &#123;
             handle_input(fd[i], buf, n);
          &#125;
     &#125;
-&#125;<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
-<p>这种方式存在两种问题。（1）当任一连接上都没有数据可读时，循环将无限期地旋转，耗尽所有 CPU 周期。（2）如果您尝试使用这种方法处理一个或两个以上的连接，您将对每个连接进行一次内核调用，无论它是否有任何数据供您使用。</p>
+&#125;<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre> 这种方式存在两种问题。（1）当任一连接上都没有数据可读时，循环将无限期地旋转，耗尽所有 CPU 周期。（2）如果您尝试使用这种方法处理一个或两个以上的连接，您将对每个连接进行一次内核调用，无论它是否有任何数据供您使用。</p>
 <p>人们仍然使用这个问题的最古老的解决方案是 select()。 select() 调用采用三组 fds（作为位数组实现）：一组用于读取，一组用于写入，一组用于“异常”。它会一直等到其中一个套接字准备就绪，然后将这些套接字更改为仅包含准备好使用的套接字。</p>
-<h2 id="libevent的使用"><a href="#libevent的使用" class="headerlink" title="libevent的使用"></a>libevent的使用</h2><h3 id="较底层的使用"><a href="#较底层的使用" class="headerlink" title="较底层的使用"></a>较底层的使用</h3><p>callback+状态转移:</p>
+<h2 id="libevent的使用">libevent的使用</h2>
+<h3 id="较底层的使用">较底层的使用</h3>
+<p>callback+状态转移:</p>
 <ul>
 <li>调用event_base_new创建一个event_base对象base</li>
 <li>创建监听fd并设置为非阻塞的</li>
@@ -391,45 +395,32 @@ while (i_still_want_to_read()) &#123;
 <li>调用event_add将上边创建的事件进行注册</li>
 <li>调用event_base_dispatch会循环等待事件发生</li>
 </ul>
-<p><code>do_accept</code>做的事：</p>
-<ul>
-<li>为每个新fd创建一个结构体，维护着相关状态和buffer<pre class="line-numbers language-c++" data-language="c++"><code class="language-c++">struct fd_state &#123;
+<p><code>do_accept</code>做的事： - 为每个新fd创建一个结构体，维护着相关状态和buffer <pre class="line-numbers language-c++" data-language="c++"><code class="language-c++">struct fd_state &#123;
     char buffer[MAX_LINE];
     size_t buffer_used;
     size_t n_written;
     size_t write_upto;
     struct event *read_event;
     struct event *write_event;
-&#125;;<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre></li>
-<li>创建可读事件，其回调函数是do_read()，在回调时接收state的指针作为参数</li>
-<li>创建可写事件，其回调函数是do_write()，同样的，在回调时接收state的指针作为参数</li>
-<li>将可读事件通过event_add()启动监控</li>
-</ul>
-<p><code>do_read</code>做的事</p>
-<ul>
-<li>读取到recv返回&lt;&#x3D;0的结果</li>
-<li>处理接收到的数据，存入buffer</li>
-<li>调用event_add()将该fd对应的可写监听打开</li>
-</ul>
-<p><code>do_write</code>做的事</p>
-<ul>
-<li>不断地调用send()发送，直到send返回&lt;&#x3D;0</li>
-<li>如果出现EAGAIN就先return</li>
-</ul>
-<h3 id="简化后的使用"><a href="#简化后的使用" class="headerlink" title="简化后的使用"></a>简化后的使用</h3><p>处理非阻塞网络IO时，通常都会给每个fd创建对应的buffer缓存，因为一个fd的四种状态<strong>可读-已读完-可写-已写完</strong>之间有一定的时间间隔，而这些间隔内，我们可能因为新的fd可读、可写而去处理新的连接。因此buffer来缓存已读或未写的数据，buffer是必须的。</p>
+&#125;;<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre> - 创建可读事件，其回调函数是do_read()，在回调时接收state的指针作为参数 - 创建可写事件，其回调函数是do_write()，同样的，在回调时接收state的指针作为参数 - 将可读事件通过event_add()启动监控</p>
+<p><code>do_read</code>做的事 - 读取到recv返回&lt;=0的结果 - 处理接收到的数据，存入buffer - 调用event_add()将该fd对应的可写监听打开</p>
+<p><code>do_write</code>做的事 - 不断地调用send()发送，直到send返回&lt;=0 - 如果出现EAGAIN就先return</p>
+<h3 id="简化后的使用">简化后的使用</h3>
+<p>处理非阻塞网络IO时，通常都会给每个fd创建对应的buffer缓存，因为一个fd的四种状态<strong>可读-已读完-可写-已写完</strong>之间有一定的时间间隔，而这些间隔内，我们可能因为新的fd可读、可写而去处理新的连接。因此buffer来缓存已读或未写的数据，buffer是必须的。</p>
 <p>简化的版本主要是利用<code>bufferevents</code>库，代码简化从<code>do_accept()</code>开始：</p>
 <ul>
 <li>调用<code>bufferevent_socket_new</code>为每个新<code>fd</code>创建<code>bufferevent</code></li>
-<li>调用<code>bufferevent_setcb</code>对上述<code>bufferevent</code>设置”读”事件回调<code>readcb()</code></li>
+<li>调用<code>bufferevent_setcb</code>对上述<code>bufferevent</code>设置"读"事件回调<code>readcb()</code></li>
 <li>调用<code>bufferevent_enable</code>是事件监控开启</li>
 </ul>
 <p>在<code>readcb()</code>中：</p>
 <ul>
 <li>获取<code>bufferevent</code>的两个<code>buffer</code>，<code>input</code>(读)和<code>output</code>(写)</li>
-<li>调用<code>evbuffer_remove()</code>从<code>input</code>中读<br>数据处理</li>
+<li>调用<code>evbuffer_remove()</code>从<code>input</code>中读 数据处理</li>
 <li>调用<code>evbuffer_add()</code>将返回写入<code>output</code>中</li>
 </ul>
-<h2 id="参考资料"><a href="#参考资料" class="headerlink" title="参考资料"></a>参考资料</h2><p><a target="_blank" rel="noopener" href="https://panzhongxian.cn/cn/2020/06/libevent-note-01/">libevent 学习笔记 1 – 从网络IO说起</a></p>
+<h2 id="参考资料">参考资料</h2>
+<p><a target="_blank" rel="noopener" href="https://panzhongxian.cn/cn/2020/06/libevent-note-01/">libevent 学习笔记 1 -- 从网络IO说起</a></p>
 
                 
             </div>
