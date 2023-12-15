@@ -446,17 +446,163 @@ int main()&#123;
     return 0;
 &#125;<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre></p>
 <h2 id="阿里-2023">阿里 2023</h2>
-<p>http://101.43.147.120/p/P1082 题目内容 给定一棵二又树，试求这棵二叉树有多少个节点满足以该节点为根的子树是满二叉树?</p>
+<p>[题目内容] 给定一棵二又树，试求这棵二叉树有多少个节点满足以该节点为根的子树是满二叉树?</p>
 <p>我们定义一棵树是满二叉树，当且仅当每一层的节点数量都达到了最大值(即无法在这一层添加新节点)。</p>
 <p>输入描述 第一行输入一个正整数n，代表节点的数量。</p>
-<p>接下来的n行，第i行输入两个整数<span class="math inline">\(l_i\)</span>，代表 � i号节点的左儿子和右儿子。请注意，如果一个节点没有左儿子/右儿子，则对应的 � � l i ​ / � � r i ​ 为- 1 1。 1 ≤ ≤ � n ≤ ≤ 1 0 5 10 5</p>
+<p>接下来的n行，第i行输入两个整数<span class="math inline">\(l_i\)</span>，代表i号节点的左儿子和右儿子。请注意，如果一个节点没有左儿子/右儿子，则对应为-1</p>
 <p>输出描述 子树为满二又树的节点数量。</p>
 <p>样例1 输入 <pre class="line-numbers language-none"><code class="language-none">5
 2 3
 4 5
 -1 -1
 -1 -1
--1 -1<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre> 输出 <pre class="line-numbers language-none"><code class="language-none">4<span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre> 说明 2, 3, 4, 5号节点的子树都是满二叉树</p>
+-1 -1<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre> 输出 <pre class="line-numbers language-none"><code class="language-none">4<span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre> 说明 2, 3, 4, 5号节点的子树都是满二叉树 ### solution <pre class="line-numbers language-c++" data-language="c++"><code class="language-c++">#include &lt;iostream&gt;
+#include &lt;unordered_map&gt;
+#include &lt;vector&gt;
+
+using namespace std;
+
+struct TreeNode&#123;
+    TreeNode *left;
+    TreeNode *right;
+    int val;
+    TreeNode(): left(nullptr), right(nullptr), val(0) &#123;&#125;
+    TreeNode(int val): left(nullptr), right(nullptr), val(val) &#123;&#125;
+    TreeNode(TreeNode *left, TreeNode *right, int val): left(left), right(right), val(val) &#123;&#125;
+&#125;;
+
+vector&lt;TreeNode *&gt; v;
+unordered_map&lt;TreeNode *, int&gt; mp;
+
+int get_height(TreeNode *node)&#123;
+    if(mp.find(node)!&#x3D;mp.end()) return mp[node];
+    if(node&#x3D;&#x3D;nullptr) return 0;
+    if(node-&gt;left&#x3D;&#x3D;nullptr &amp;&amp; node-&gt;right&#x3D;&#x3D;nullptr) return 1;
+    int l_h &#x3D; get_height(node-&gt;left);
+    int r_h &#x3D; get_height(node-&gt;right);
+    int ans &#x3D; 0;
+    if(l_h !&#x3D; r_h) ans &#x3D; 0;
+    else ans &#x3D; l_h + 1;
+    mp[node] &#x3D; ans;
+    return ans;
+&#125;
+
+int main()&#123;
+    int n;
+    cin &gt;&gt; n;
+    v.resize(n+1);
+    for(int i &#x3D; 1; i &lt;&#x3D; n; ++i)&#123;
+        TreeNode *node &#x3D; new TreeNode();
+        v[i] &#x3D; node;
+    &#125;
+    for(int i &#x3D; 1; i &lt;&#x3D; n; ++i)&#123;
+        int a, b;
+        cin &gt;&gt; a &gt;&gt; b;
+        if(a!&#x3D;-1)&#123;
+            v[i]-&gt;left &#x3D; v[a];
+        &#125;
+        if(b!&#x3D;-1)&#123;
+            v[i]-&gt;right &#x3D; v[b];
+        &#125;
+    &#125;
+    vector&lt;int&gt; ans;
+    for(int i&#x3D;1; i &lt;&#x3D; n; ++i)&#123;
+        if(get_height(v[i]))&#123;
+            ans.push_back(i);
+        &#125;
+    &#125;
+    cout &lt;&lt; ans.size();
+&#125;<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre></p>
+<h3 id="第二题">第二题</h3>
+<p>http://101.43.147.120/p/P1083/submit <pre class="line-numbers language-c++" data-language="c++"><code class="language-c++">#include &lt;iostream&gt;
+#include &lt;unordered_map&gt;
+#include &lt;map&gt;
+#include &lt;vector&gt;
+
+using namespace std;
+
+map&lt;int, long long&gt; mp;
+
+long long calculate(vector&lt;int&gt; &amp;v)&#123;
+    &#x2F;&#x2F;sort(v.begin(), v.end());
+    for(auto &amp;item: v) mp[item] ++;
+    map&lt;int, long long&gt;::iterator it &#x3D; mp.begin();
+    int n &#x3D; v.size();
+    long long ans &#x3D; 0;
+    while(it !&#x3D; mp.end())&#123;
+        auto it1 &#x3D; next(it, 1);
+        if(it-&gt;first &#x3D;&#x3D; it1-&gt;first - 1)&#123;
+            auto num1 &#x3D; it-&gt;second;
+            auto num2 &#x3D; it1-&gt;second;
+            if(num1 + num2 &gt;&#x3D;3)&#123;
+                ans +&#x3D; num2 * (num1-1) * num1 &#x2F; 2;
+                ans +&#x3D; num1 * (num2-1) * num2 &#x2F; 2;
+            &#125;
+        &#125;
+        it ++;
+    &#125;
+    return ans;
+&#125;
+
+int main()&#123;
+    int n &#x3D; 0;
+    cin &gt;&gt; n;
+    vector&lt;int&gt; v(n);
+    for(int i &#x3D; 0; i &lt; n; ++i) cin &gt;&gt; v[i];
+    cout &lt;&lt; calculate(v);
+&#125;<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre> ### 第三题 http://101.43.147.120/p/P1084 分成三段区间，最大值是三段区间的最大值，最小值是三段区间的最小值 <pre class="line-numbers language-c++" data-language="c++"><code class="language-c++">#include &lt;iostream&gt;
+#include &lt;unordered_map&gt;
+#include &lt;algorithm&gt;
+#include &lt;map&gt;
+#include &lt;vector&gt;
+#include &lt;climits&gt;
+
+using namespace std;
+using ll &#x3D; long long;
+
+long long calculate(vector&lt;int&gt; &amp;v, int k)&#123;
+    sort(v.begin(), v.end());
+    int n &#x3D; v.size();
+    ll res &#x3D; INT_MAX;
+    for(int i &#x3D; 0 ; i&lt;&#x3D;k; ++i)&#123;
+        int j &#x3D; k - i;
+        &#x2F;*
+        [0, i-1], [i, n-j-1], [n-j, n-1]
+        *&#x2F;
+        int min_1 &#x3D; INT_MAX, max_1 &#x3D; INT_MIN;
+        int min_2 &#x3D; INT_MAX, max_2 &#x3D; INT_MIN;
+        int min_3 &#x3D; INT_MAX, max_3 &#x3D; INT_MIN;
+        if(i-1 &gt;&#x3D; 0)&#123;
+            min_1 &#x3D; v[0] * 2;
+            max_1 &#x3D; v[i-1] * 2;
+        &#125;
+        if(i&lt;&#x3D;n-j-1)&#123;
+            min_2 &#x3D; v[i];
+            max_2 &#x3D; v[n-j-1];
+        &#125;
+        if(n-j &lt;&#x3D; n-1)&#123;
+            min_3 &#x3D; v[n-j]&#x2F;2;
+            max_3 &#x3D; v[n-1]&#x2F;2;
+        &#125;
+        int t_min &#x3D; min(min(min_1, min_2), min_3);
+        int t_max &#x3D; max(max(max_1, max_2), max_3);
+        &#x2F;&#x2F; cout &lt;&lt; i &lt;&lt; &quot; &quot; &lt;&lt; j &lt;&lt; &quot; &quot; &lt;&lt; t_min &lt;&lt; &quot; &quot; &lt;&lt; t_max &lt;&lt; endl;
+        ll ans &#x3D; t_max - t_min;
+        res &#x3D; min(ans, res);
+    &#125;
+    return res;
+&#125;
+
+int main()&#123;
+    int n &#x3D; 0;
+    cin &gt;&gt; n;
+    int k;
+    cin &gt;&gt; k;
+    vector&lt;int&gt; v(n);
+    for(int i &#x3D; 0; i &lt; n; ++i) cin &gt;&gt; v[i];
+
+    cout &lt;&lt; calculate(v, k);
+&#125;<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre></p>
 <h2 id="reference">reference</h2>
 <p>位运算的技巧 https://www.cnblogs.com/RioTian/p/13598747.html</p>
 
@@ -599,18 +745,17 @@ int main()&#123;
 <article id="prenext-posts" class="prev-next articles">
     <div class="row article-row">
         
-        <div class="article col s12 m6" data-aos="fade-up" data-aos="fade-up">
+        <div class="article col s12 m6" data-aos="fade-up">
             <div class="article-badge left-badge text-color">
-                <i class="far fa-dot-circle"></i>&nbsp;本篇
-            </div>
+                <i class="fas fa-chevron-left"></i>&nbsp;上一篇</div>
             <div class="card">
-                <a href="/2023/03/18/2023%E6%98%A5%E6%8B%9B%E7%AC%94%E8%AF%95%E8%AE%B0%E5%BD%95/">
+                <a href="/2023/04/27/python%E5%9F%BA%E7%A1%80%E7%9F%A5%E8%AF%86/">
                     <div class="card-image">
                         
                         
-                        <img src="/medias/featureimages/11.jpg" class="responsive-img" alt="2023春招笔试记录">
+                        <img src="/medias/featureimages/3.jpg" class="responsive-img" alt="python基础知识">
                         
-                        <span class="card-title">2023春招笔试记录</span>
+                        <span class="card-title">python基础知识</span>
                     </div>
                 </a>
                 <div class="card-content article-content">
@@ -620,9 +765,9 @@ int main()&#123;
                         
                     </div>
                     <div class="publish-info">
-                            <span class="publish-date">
-                                <i class="far fa-clock fa-fw icon-date"></i>2023-03-18
-                            </span>
+                        <span class="publish-date">
+                            <i class="far fa-clock fa-fw icon-date"></i>2023-04-27
+                        </span>
                         <span class="publish-author">
                             
                             <i class="fas fa-user fa-fw"></i>
@@ -631,7 +776,6 @@ int main()&#123;
                         </span>
                     </div>
                 </div>
-
                 
             </div>
         </div>
